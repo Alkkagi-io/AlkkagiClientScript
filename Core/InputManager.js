@@ -1,13 +1,4 @@
-/* global pc */
-
 var InputManager = pc.createScript('inputManager');
-
-// Attributes
-InputManager.attributes.add('networkEntity', { 
-    type: 'entity', 
-    title: 'Network Entity',
-    description: 'Reference to the network entity (optional)'
-});
 
 // Initialize
 InputManager.prototype.initialize = function () {
@@ -26,48 +17,27 @@ InputManager.prototype.initialize = function () {
 
 // Update loop
 InputManager.prototype.update = function (dt) {
-    // 1) SharedBundle 체크
-    if (!window.AlkkagiSharedBundle) {
-        this._logBlock('SharedBundle not loaded');
-        return;
-    }
-
     // 2) 플레이어 준비 플래그
-    if (!window.setPlayerHandler) {
-        return;
-    }
-
-    // 3) 네트워크 매니저
-    var network = window.networkManager;
-    if (!network) {
-        this._logBlock('NetworkManager not found');
-        return;
-    }
-
-    // 4) 웹소켓 상태
-    if (!network.ws || network.ws.readyState !== WebSocket.OPEN) {
-        this._logBlock('WebSocket not open');
+    if (gameManager.playerEntityID == -1) {
         return;
     }
 
     // 블록 해제
     this._lastBlockReason = null;
 
-    var B = window.AlkkagiSharedBundle;
-
     // ===== 이동 입력 처리 =====
-    var input = this._getMoveInput(B);
+    var input = this._getMoveInput();
     if (input !== this.lastInput) {
         this.lastInput = input;
 
         // 마지막 비영 방향 갱신
-        var v = this._inputToVec2(input, B);
+        var v = this._inputToVec2(input);
         if (v.x !== 0 || v.y !== 0) {
             this._lastNonZeroDir.copy(v);
         }
 
         // 패킷 전송
-        network.send(new B.C2S_MoveInputPacket(input));
+        gameManager.networkManager.send(new AlkkagiSharedBundle.C2S_MoveInputPacket(input));
 
         // 디버그 로그 (필요시)
         // var inputNames = ['None','Up','Down','Left','Right','UpLeft','UpRight','DownLeft','DownRight'];
@@ -81,7 +51,7 @@ InputManager.prototype.update = function (dt) {
 
     if (attackPressed && !this.isCharging) {
         // 공격 시작
-        network.send(new B.C2S_StartAttackChargingPacket());
+        gameManager.networkManager.send(new AlkkagiSharedBundle.C2S_StartAttackChargingPacket());
         this.isCharging = true;
         console.log('[InputManager] Start Attack');
     } else if (!attackPressed && this.isCharging) {
@@ -95,16 +65,16 @@ InputManager.prototype.update = function (dt) {
         }
         dir.normalize();
 
-        var pkt = new B.C2S_FinishAttackChargingPacket(new B.Vector(dir.x, dir.y));
-        network.send(pkt);
+        var pkt = new AlkkagiSharedBundle.C2S_FinishAttackChargingPacket(new AlkkagiSharedBundle.Vector(dir.x, dir.y));
+        gameManager.networkManager.send(pkt);
         this.isCharging = false;
         console.log('[InputManager] Finish Attack', dir.x.toFixed(2), dir.y.toFixed(2));
     }
 };
 
 // 이동 입력 계산
-InputManager.prototype._getMoveInput = function (B) {
-    if (!this.app.keyboard) return B.EMoveInput.None;
+InputManager.prototype._getMoveInput = function () {
+    if (!this.app.keyboard) return AlkkagiSharedBundle.EMoveInput.None;
 
     var kb = this.app.keyboard;
     var up = kb.isPressed(pc.KEY_W) || kb.isPressed(pc.KEY_UP);
@@ -112,28 +82,28 @@ InputManager.prototype._getMoveInput = function (B) {
     var left = kb.isPressed(pc.KEY_A) || kb.isPressed(pc.KEY_LEFT);
     var right = kb.isPressed(pc.KEY_D) || kb.isPressed(pc.KEY_RIGHT);
 
-    if (up && left) return B.EMoveInput.UpLeft;
-    if (up && right) return B.EMoveInput.UpRight;
-    if (down && left) return B.EMoveInput.DownLeft;
-    if (down && right) return B.EMoveInput.DownRight;
-    if (up) return B.EMoveInput.Up;
-    if (down) return B.EMoveInput.Down;
-    if (left) return B.EMoveInput.Left;
-    if (right) return B.EMoveInput.Right;
-    return B.EMoveInput.None;
+    if (up && left) return AlkkagiSharedBundle.EMoveInput.UpLeft;
+    if (up && right) return AlkkagiSharedBundle.EMoveInput.UpRight;
+    if (down && left) return AlkkagiSharedBundle.EMoveInput.DownLeft;
+    if (down && right) return AlkkagiSharedBundle.EMoveInput.DownRight;
+    if (up) return AlkkagiSharedBundle.EMoveInput.Up;
+    if (down) return AlkkagiSharedBundle.EMoveInput.Down;
+    if (left) return AlkkagiSharedBundle.EMoveInput.Left;
+    if (right) return AlkkagiSharedBundle.EMoveInput.Right;
+    return AlkkagiSharedBundle.EMoveInput.None;
 };
 
 // EMoveInput -> 2D 방향 벡터
-InputManager.prototype._inputToVec2 = function (input, B) {
+InputManager.prototype._inputToVec2 = function (input) {
     switch (input) {
-        case B.EMoveInput.Up: return new pc.Vec2(0, 1);
-        case B.EMoveInput.Down: return new pc.Vec2(0, -1);
-        case B.EMoveInput.Left: return new pc.Vec2(-1, 0);
-        case B.EMoveInput.Right: return new pc.Vec2(1, 0);
-        case B.EMoveInput.UpLeft: return new pc.Vec2(-1, 1);
-        case B.EMoveInput.UpRight: return new pc.Vec2(1, 1);
-        case B.EMoveInput.DownLeft: return new pc.Vec2(-1, -1);
-        case B.EMoveInput.DownRight: return new pc.Vec2(1, -1);
+        case AlkkagiSharedBundle.EMoveInput.Up: return new pc.Vec2(0, 1);
+        case AlkkagiSharedBundle.EMoveInput.Down: return new pc.Vec2(0, -1);
+        case AlkkagiSharedBundle.EMoveInput.Left: return new pc.Vec2(-1, 0);
+        case AlkkagiSharedBundle.EMoveInput.Right: return new pc.Vec2(1, 0);
+        case AlkkagiSharedBundle.EMoveInput.UpLeft: return new pc.Vec2(-1, 1);
+        case AlkkagiSharedBundle.EMoveInput.UpRight: return new pc.Vec2(1, 1);
+        case AlkkagiSharedBundle.EMoveInput.DownLeft: return new pc.Vec2(-1, -1);
+        case AlkkagiSharedBundle.EMoveInput.DownRight: return new pc.Vec2(1, -1);
         default: return new pc.Vec2(0, 0);
     }
 };
@@ -141,13 +111,12 @@ InputManager.prototype._inputToVec2 = function (input, B) {
 // 마우스 에임 방향 계산 (2D, XZ 평면)
 InputManager.prototype._getAimDirection2D = function () {
     try {
-        var network = window.networkManager;
-        if (!network || network.playerEntityId == null) {
+        if (gameManager.playerEntityID == -1) {
             return new pc.Vec2(0, 0);
         }
 
-        var player = network.getOrCreateEntity(network.playerEntityId);
-        if (!player) {
+        var player = gameManager.getEntity(gameManager.playerEntityID);
+        if (player == null) {
             return new pc.Vec2(0, 0);
         }
 
@@ -211,36 +180,12 @@ InputManager.prototype._logBlock = function (reason) {
 
 // 디버그: 현재 입력 이름
 InputManager.prototype.getCurrentInputName = function () {
-    var B = window.AlkkagiSharedBundle;
-    if (!B) return 'SharedBundle not loaded';
-    
     var inputNames = ['None','Up','Down','Left','Right','UpLeft','UpRight','DownLeft','DownRight'];
     return inputNames[this.lastInput] || 'Unknown';
 };
 
 // 디버그: 수동 입력 전송
 InputManager.prototype.sendInput = function (inputValue) {
-    var B = window.AlkkagiSharedBundle;
-    var network = window.networkManager;
-    
-    if (!B) {
-        console.error('[InputManager] SharedBundle not loaded');
-        return;
-    }
-    if (!network) {
-        console.error('[InputManager] NetworkManager not found');
-        return;
-    }
-    if (!network.ws || network.ws.readyState !== WebSocket.OPEN) {
-        console.error('[InputManager] WebSocket not open');
-        return;
-    }
-
-    network.send(new B.C2S_MoveInputPacket(inputValue));
+    gameManager.networkManager.send(new AlkkagiSharedBundle.C2S_MoveInputPacket(inputValue));
     console.log('[InputManager] Manual input sent:', inputValue);
-};
-
-// Clean up
-InputManager.prototype.destroy = function () {
-    console.log('[InputManager] Destroyed');
 };
