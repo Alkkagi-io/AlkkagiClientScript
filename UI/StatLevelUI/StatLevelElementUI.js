@@ -1,27 +1,41 @@
 var StatLevelElementUI = pc.createScript('statLevelElementUI');
 
-StatLevelElementUI.attributes.add('statID', {
-    type: 'string',
-    enum: Object.entries(globalThis.bundle.EStatLevelUpType).map(([key, val]) => ({
-        [key]: String(val)
-    }))
-    // enum: [
-    //     { 'ADD_WEIGHT_PER': '1' },
-    //     { 'ADD_MAX_CHARGE_LEN_PER': '2' },
-    //     { 'ADD_MAX_HP_PER': '3' },
-    //     { 'ADD_MOVE_SPEED_PER': '4' },
-    //     { 'REDUCE_ATK_COOLTIME_PER': '5' },
-    //     { 'AUTO_HEAL': '6' }
-    // ]
+StatLevelElementUI.attributes.add('statId', {
+    type: 'number'
 });
 
-StatLevelElementUI.prototype.postInitialize = function() {
-    this.initializeUI();
+StatLevelElementUI.attributes.add('gauge', {
+    type: 'entity'
+});
+
+StatLevelElementUI.attributes.add('button', {
+    type: 'entity'
+});
+
+StatLevelElementUI.attributes.add('level', {
+    type: 'number'
+});
+
+StatLevelElementUI.prototype.init = function(statId) {
+    this.statId = statId;  
+    this.button.button.on('click', function(event) {
+        this.onClickUpgrade();
+    });
+
+    this.reload(0);
 };
 
-StatLevelElementUI.prototype.initializeUI = async function() {
-    
-    console.log(`[StatLevelElementUI::initializeUI] ${this.statID}`);
-    const resourceStatLevelUp = globalThis.bundle.ResourceStatLevelUp.get(this.statID);
-    console.log(`[StatLevelElementUI::initializeUI] ${resourceStatLevelUp.name}`);
+StatLevelElementUI.prototype.reload = function(curLevel) {
+    if (this.level == curLevel)
+        return;
+    this.level = curLevel;
+
+    const res = window.AlkkagiSharedBundle.ResourceStatLevels.get(this.statId);
+    if (!res)
+        return;
+    this.gauge().setValue(curLevel / res.maxLevel);
+};
+
+StatLevelElementUI.prototype.onClickUpgrade = function() {
+    window.gameManager.networkManager.send(new window.AlkkagiSharedBundle.C2S_CharacterStatLevelUpRequestPacket(this.statId));
 };
