@@ -12,6 +12,12 @@ InputManager.prototype.initialize = function () {
     // 마지막 비영(0,0) 이동 방향 (공격 에임 대체용)
     this._lastNonZeroDir = new pc.Vec2(1, 0);
 
+    this._mousePos = new pc.Vec2();
+    this.app.mouse.on(pc.EVENT_MOUSEMOVE, function (ev) {
+        this._mousePos.set(ev.x, ev.y);
+    }, this);
+
+
     console.log('[InputManager] Initialized');
 };
 
@@ -65,7 +71,7 @@ InputManager.prototype.update = function (dt) {
         }
         dir.normalize();
 
-        var pkt = new AlkkagiSharedBundle.C2S_FinishAttackChargingPacket(new AlkkagiSharedBundle.Vector(dir.x, dir.y));
+        var pkt = new AlkkagiSharedBundle.C2S_FinishAttackChargingPacket(new AlkkagiSharedBundle.Vector(dir.x, -dir.y));
         gameManager.networkManager.send(pkt);
         this.isCharging = false;
         console.log(`[InputManager] Finish Attack ${dir}`);
@@ -136,14 +142,9 @@ InputManager.prototype._getAimDirection2D = function () {
         }
 
         var cam = camEntity.camera;
-        var mouse = this.app.mouse;
-        if (!mouse) {
-            return new pc.Vec2(0, 0);
-        }
-
         // 레이 생성
-        var from = cam.screenToWorld(mouse.x, mouse.y, cam.nearClip);
-        var to = cam.screenToWorld(mouse.x, mouse.y, cam.farClip);
+        var from = cam.screenToWorld(this._mousePos.x, this._mousePos.y, cam.nearClip);
+        var to = cam.screenToWorld(this._mousePos.x, this._mousePos.y, cam.farClip);
         var dir3 = new pc.Vec3();
         dir3.sub2(to, from).normalize();
 
