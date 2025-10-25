@@ -32,5 +32,5 @@ EntityComponent.prototype.update = function(dt) {
 };
 
 EntityComponent.prototype._to3D = function (p2) {
-    return new pc.Vec3(p2.x, 0, -p2.y);
+    return new pc.Vec3(p2.x, p2.y, 0);
 };

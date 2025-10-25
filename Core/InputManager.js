@@ -23,6 +23,10 @@ InputManager.prototype.initialize = function () {
 
 // Update loop
 InputManager.prototype.update = function (dt) {
+    if (window.gameManager == null) {
+        return;
+    }
+
     // 2) 플레이어 준비 플래그
     if (gameManager.playerEntityID == -1) {
         return;
@@ -71,7 +75,7 @@ InputManager.prototype.update = function (dt) {
         }
         dir.normalize();
 
-        var pkt = new AlkkagiSharedBundle.C2S_FinishAttackChargingPacket(new AlkkagiSharedBundle.Vector(dir.x, -dir.y));
+        var pkt = new AlkkagiSharedBundle.C2S_FinishAttackChargingPacket(new AlkkagiSharedBundle.Vector(dir.x, dir.y));
         gameManager.networkManager.send(pkt);
         this.isCharging = false;
         console.log(`[InputManager] Finish Attack ${dir}`);
@@ -148,12 +152,12 @@ InputManager.prototype._getAimDirection2D = function () {
         var dir3 = new pc.Vec3();
         dir3.sub2(to, from).normalize();
 
-        // y=0 평면과 교차
-        if (Math.abs(dir3.y) < 1e-6) {
+        // z=0 평면과 교차
+        if (Math.abs(dir3.z) < 1e-6) {
             return new pc.Vec2(0, 0);
         }
 
-        var t = -from.y / dir3.y;
+        var t = -from.z / dir3.z;
         if (t <= 0) {
             return new pc.Vec2(0, 0);
         }
@@ -163,8 +167,8 @@ InputManager.prototype._getAimDirection2D = function () {
 
         var playerPos = player.getPosition();
         
-        // 2D 방향 (x, z)
-        return new pc.Vec2(hit.x - playerPos.x, hit.z - playerPos.z);
+        // 2D 방향 (x, y)
+        return new pc.Vec2(hit.x - playerPos.x, hit.y - playerPos.y);
     } catch (e) {
         console.error('[InputManager] Error in _getAimDirection2D:', e);
         return new pc.Vec2(0, 0);
