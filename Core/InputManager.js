@@ -68,7 +68,7 @@ InputManager.prototype.update = function (dt) {
         var pkt = new AlkkagiSharedBundle.C2S_FinishAttackChargingPacket(new AlkkagiSharedBundle.Vector(dir.x, dir.y));
         gameManager.networkManager.send(pkt);
         this.isCharging = false;
-        console.log('[InputManager] Finish Attack', dir.x.toFixed(2), dir.y.toFixed(2));
+        console.log(`[InputManager] Finish Attack ${dir}`);
     }
 };
 
