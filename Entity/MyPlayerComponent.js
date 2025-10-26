@@ -9,7 +9,7 @@ MyPlayerComponent.prototype.init = function() {
     if (!screen)
         return;
 
-    screen.init(entityData.name);
+    screen.script.inGameScreen.init(entityData.name);
 };
 
 MyPlayerComponent.prototype.handleUpdateEntityData = function() {

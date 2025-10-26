@@ -14,9 +14,9 @@ GaugeElement.attributes.add('text', {
 
 GaugeElement.prototype.setGauge = function(value) {
     if (!this.gauge)
-        return;
+        return; 
 
-    this.gauge.scale.x = value / this.maxValue;
+    this.gauge.setLocalScale(value / this.maxValue, 1, 1);
 };
 
 GaugeElement.prototype.setText = function(value) {

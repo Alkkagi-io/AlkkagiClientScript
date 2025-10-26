@@ -30,10 +30,10 @@ StatLevelElementUI.prototype.reload = function(curLevel) {
         return;
     this.level = curLevel;
 
-    const res = window.AlkkagiSharedBundle.ResourceStatLevels.get(this.statId);
+    const res = window.AlkkagiSharedBundle.ResourceStatLevelUp.get(this.statId);
     if (!res)
         return;
-    this.gauge().setValue(curLevel / res.maxLevel);
+    this.gauge.script.GaugeElement.setGauge(curLevel / res.maxLevel);
 };
 
 StatLevelElementUI.prototype.onClickUpgrade = function() {

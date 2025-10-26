@@ -17,22 +17,23 @@ InGameScreen.attributes.add('rankingPanel', {
 });
 
 InGameScreen.prototype.postInitialize = function() {
-    uiManager.addScreen('ingame', this);
+    uiManager.addScreen('ingame', this.entity);
 }
 
 InGameScreen.prototype.init = function(name) {
     this.nameText.element.text = name;
     this.setLevel(1);
-    this.statLevelUpPanel.init();
-    this.rankingPanel.updateMyScore(0);
+    this.statLevelUpPanel.script.statLevelUI.init();
+    this.rankingPanel.script.RankingPanel.updateMyScore(0);
 }
 
 InGameScreen.prototype.handlePlayerUpdate = function() {
-    const playerEntityData = window.gameManager.getEntity(window.gameManager.playerEntityID).entityData;
+    const entity = window.gameManager.getEntity(window.gameManager.playerEntityID);
+    const entityData = entity.script.entityComponent.entityData;
 
-    setLevel(playerEntityData.level);
-    rankingPanel.updateMyScore(playerEntityData.score);
-    this.handlePlayerXPUpdate(playerEntityData.exp);
+    // this.setLevel(playerEntityData.level);
+    this.rankingPanel.script.RankingPanel.updateMyScore(entityData.score);
+    this.handlePlayerXPUpdate(entityData.exp);
 }
 
 InGameScreen.prototype.handlePlayerXPUpdate = function(totalXP) {
@@ -46,8 +47,8 @@ InGameScreen.prototype.handleUpdatePlayerLevelUpPoint = function(levelUpPoint) {
 InGameScreen.prototype.setLevel = function(level) {
     const res = window.AlkkagiSharedBundle.ResourceCharacterLevel.get(level);
     if (res) {
-        this.levelGauge.maxValue = res.requiredXP;
-        this.levelGauge.script.gaugeElement.setGauge(0);
-        this.levelGauge.script.gaugeElement.setText(`Level ${res.level}`);
+        this.levelGauge.script.GaugeElement.maxValue = res.requiredXP;
+        this.levelGauge.script.GaugeElement.setGauge(0);
+        this.levelGauge.script.GaugeElement.setText(`Level ${res.level}`);
     }
 }

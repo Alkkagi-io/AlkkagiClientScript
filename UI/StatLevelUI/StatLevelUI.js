@@ -6,14 +6,14 @@ StatLevelUI.attributes.add('elems', {
 });
 
 StatLevelUI.prototype.init = function() {
-    for (const i = 0; i < this.elems.length; i++) {
-        const elem = this.elems[i];
+    for (let i = 0; i < this.elems.length; i++) {
+        const elem = this.elems[i].script.statLevelElementUI;
         elem.init(i + 1);
     }
 };
 
 StatLevelUI.prototype.handleLevelUpResponse = function(type, level) {
-    const elem = this.elems[type];
+    const elem = this.elems[type].script.statLevelElementUI;
     if (!elem)
         return;
     elem.reload(level);
