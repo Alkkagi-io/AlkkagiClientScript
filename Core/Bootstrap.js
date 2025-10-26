@@ -32,5 +32,5 @@ Bootstrap.prototype.onConnected = function() {
 };
 
 Bootstrap.prototype.RegisterFactory = function(type) {
-    EntityFactory.on(type, this.entityTemplates[type]);
+    EntityFactory.on(type, this.entityTemplates[type - 1]);
 };
