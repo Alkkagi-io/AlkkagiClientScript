@@ -12,7 +12,7 @@ RankingPanel.attributes.add('rankElems', {
 RankingPanel.prototype.handleUpdateRanking = function(rankPlayerIds, rankPlayerScores) {
     for (const i = 0; i < this.rankElems.lenght; i++) {
         const elem = this.rankElems[i];
-        const rankPlayer = window.GameManager.getEntity(rankPlayerIds[i]);
+        const rankPlayer = window.gameManager.getEntity(rankPlayerIds[i]);
         if (rankPlayer == null) {
             elem.set('-');
             continue
@@ -23,7 +23,7 @@ RankingPanel.prototype.handleUpdateRanking = function(rankPlayerIds, rankPlayerS
 }
 
 RankingPanel.prototype.updateMyScore = function(score) {
-    const myEntity = window.GameManager.getEntity(window.GameManager.playerEntityID);
+    const myEntity = window.gameManager.getEntity(window.gameManager.playerEntityID);
     if (!myEntity)
         return;
 

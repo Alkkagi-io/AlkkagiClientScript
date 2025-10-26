@@ -24,7 +24,7 @@ InGameScreen.prototype.init = function(name) {
 }
 
 InGameScreen.prototype.handlePlayerUpdate = function() {
-    const playerEntityData = window.GameManager.getEntity(window.GameManager.playerEntityID).entityData;
+    const playerEntityData = window.gameManager.getEntity(window.gameManager.playerEntityID).entityData;
 
     setLevel(playerEntityData.level);
     rankingPanel.updateMyScore(playerEntityData.score);
