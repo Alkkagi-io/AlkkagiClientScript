@@ -4,6 +4,9 @@
             packet.entityDatas.forEach(entityData => {
                 const entity = this.gameManager.getOrCreateEntity(entityData);
                 entity.script.entityComponent.updateEntityData(packet.elapsedMS, entityData);
+                if (entity.script.myPlayerComponent) {
+                    entity.script.myPlayerComponent.handleUpdateEntityData();
+                }
             });
 
             this.gameManager.clear();

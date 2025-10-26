@@ -3,6 +3,9 @@ const Bootstrap = pc.createScript('bootstrap');
 Bootstrap.attributes.add('entityTemplates', { type: 'asset', assetType: 'template', array: true });
 
 Bootstrap.prototype.initialize = async function() {
+    // SharedBundle 로드 전 먼저 등록
+    window.uiManager = new UIManager();
+
     // AlkkagiSharedBundle이 로드될 때까지 대기
     while (window.AlkkagiSharedBundle == null) {
         await new Promise(resolve => setTimeout(resolve, 100));

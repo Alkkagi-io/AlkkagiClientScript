@@ -11,6 +11,9 @@ EntityComponent.prototype.initializeEntity = function(entityData) {
     this.entityData = entityData;
     this._velocity.set(0, 0, 0);
     this.entity.setPosition(this._to3D(this.entityData.position));
+
+    if (this.entity.script.myPlayerComponent)
+        this.entity.script.myPlayerComponent.init();
 };
 
 EntityComponent.prototype.updateEntityData = function(elapsedMS, entityData) {
