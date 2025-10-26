@@ -1,6 +1,6 @@
 const Bootstrap = pc.createScript('bootstrap');
 
-Bootstrap.attributes.add('entityTemplate', { type: 'asset', assetType: 'template' });
+Bootstrap.attributes.add('entityTemplates', { type: 'asset', assetType: 'template', array: true });
 
 Bootstrap.prototype.initialize = async function() {
     // AlkkagiSharedBundle이 로드될 때까지 대기
@@ -9,11 +9,11 @@ Bootstrap.prototype.initialize = async function() {
     }
 
     await ResourceManager.initialize();
-
-    EntityFactory.on(AlkkagiSharedBundle.EEntityType.Character, this.entityTemplate);
-    EntityFactory.on(AlkkagiSharedBundle.EEntityType.XPObject, this.entityTemplate);
-    EntityFactory.on(AlkkagiSharedBundle.EEntityType.XPContainer, this.entityTemplate);
-    EntityFactory.on(AlkkagiSharedBundle.EEntityType.GoldContainer, this.entityTemplate);
+    this.RegisterFactory(AlkkagiSharedBundle.EEntityType.Character);
+    this.RegisterFactory(AlkkagiSharedBundle.EEntityType.XPObject);
+    this.RegisterFactory(AlkkagiSharedBundle.EEntityType.XPContainer);
+    this.RegisterFactory(AlkkagiSharedBundle.EEntityType.GoldContainer);
+    this.RegisterFactory(AlkkagiSharedBundle.EEntityType.Player);
     
     // const networkOptions = createNetworkOptions({ address: 'wss://alkkagidev.plasticpipe.tube:9696/ws' });
     const networkOptions = createNetworkOptions({ address: 'ws://localhost:3000/ws' });
@@ -29,4 +29,8 @@ Bootstrap.prototype.initialize = async function() {
 
 Bootstrap.prototype.onConnected = function() {
     window.gameManager.networkManager.send(new AlkkagiSharedBundle.C2S_EnterWorldRequestPacket("myname"));
+};
+
+Bootstrap.prototype.RegisterFactory = function(type) {
+    EntityFactory.on(type, this.entityTemplates[type]);
 };
