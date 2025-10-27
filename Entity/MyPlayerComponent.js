@@ -34,6 +34,6 @@ MyPlayerComponent.prototype.handleStatLevelUp = function(type, level, remainLeve
     if (!screen) 
         return;
 
-    screen.script.inGameScreen.statLevelUpPanel.handleLevelUpResponse(type, level);
+    screen.script.inGameScreen.statLevelUpPanel.script.statLevelUI.handleLevelUpResponse(type, level);
     screen.script.inGameScreen.handleUpdatePlayerLevelUpPoint(remainLevelUpPoint);
 };
