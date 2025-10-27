@@ -13,7 +13,7 @@ StatLevelUI.prototype.init = function() {
 };
 
 StatLevelUI.prototype.handleLevelUpResponse = function(type, level) {
-    const elem = this.elems[type].script.statLevelElementUI;
+    const elem = this.elems[type - 1].script.statLevelElementUI;
     if (!elem)
         return;
     elem.reload(level);
