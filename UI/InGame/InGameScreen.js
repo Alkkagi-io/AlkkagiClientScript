@@ -37,7 +37,7 @@ InGameScreen.prototype.handlePlayerUpdate = function() {
 }
 
 InGameScreen.prototype.handlePlayerXPUpdate = function(totalXP) {
-    // todo: doyun
+    this.levelGauge.script.GaugeElement.setGauge(totalXP);
 }
 
 InGameScreen.prototype.handleUpdatePlayerLevelUpPoint = function(levelUpPoint) {
@@ -50,5 +50,10 @@ InGameScreen.prototype.setLevel = function(level) {
         this.levelGauge.script.GaugeElement.maxValue = res.requiredXP;
         this.levelGauge.script.GaugeElement.setGauge(0);
         this.levelGauge.script.GaugeElement.setText(`Level ${res.level}`);
+
+        const prevRes = window.AlkkagiSharedBundle.ResourceCharacterLevel.get(level - 1);
+        if (prevRes) {
+            this.levelGauge.script.GaugeElement.offset = prevRes.requiredXP;
+        }
     }
 }

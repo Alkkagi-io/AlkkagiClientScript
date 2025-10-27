@@ -20,11 +20,12 @@ MyPlayerComponent.prototype.handleUpdateEntityData = function() {
     screen.script.inGameScreen.handlePlayerUpdate();
 };
 
-MyPlayerComponent.prototype.handleLevelUp = function(levelUpPoint) {
+MyPlayerComponent.prototype.handleLevelUp = function(level, levelUpPoint) {
     const screen = uiManager.getScreen('ingame');
     if (!screen) 
         return;
 
+    screen.script.inGameScreen.setLevel(level);
     screen.script.inGameScreen.handleUpdatePlayerLevelUpPoint(levelUpPoint);
 };
 

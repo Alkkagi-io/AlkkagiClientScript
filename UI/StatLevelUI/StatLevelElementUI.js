@@ -18,9 +18,15 @@ StatLevelElementUI.attributes.add('level', {
 
 StatLevelElementUI.prototype.init = function(statId) {
     this.statId = statId;  
-    this.button.button.on('click', function(event) {
+    this.button.button.on('click', event => {
         this.onClickUpgrade();
     });
+
+    const res = window.AlkkagiSharedBundle.ResourceStatLevelUp.get(this.statId);
+    if (!res)
+        return;
+
+    this.gauge.script.GaugeElement.maxValue = res.maxLevel;
 
     this.reload(0);
 };
@@ -33,7 +39,8 @@ StatLevelElementUI.prototype.reload = function(curLevel) {
     const res = window.AlkkagiSharedBundle.ResourceStatLevelUp.get(this.statId);
     if (!res)
         return;
-    this.gauge.script.GaugeElement.setGauge(curLevel / res.maxLevel);
+
+    this.gauge.script.GaugeElement.setGauge(curLevel);
 };
 
 StatLevelElementUI.prototype.onClickUpgrade = function() {

@@ -11,7 +11,7 @@
                 return;
             }
 
-            playerEntity.script.myPlayerComponent.handleLevelUp(packet.currentStatPoint);
+            playerEntity.script.myPlayerComponent.handleLevelUp(packet.currentLevel, packet.currentStatPoint);
         }
     }
 
