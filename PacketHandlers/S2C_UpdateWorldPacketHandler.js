@@ -7,6 +7,9 @@
                 if (entity.script.myPlayerComponent) {
                     entity.script.myPlayerComponent.handleUpdateEntityData();
                 }
+                if (entityData instanceof AlkkagiSharedBundle.DamagableEntityData && entity.script.damagableEntityComponent) {
+                    entity.script.damagableEntityComponent.handleChangeHp(entityData.hpPer);
+                }
             });
 
             this.gameManager.clear();
