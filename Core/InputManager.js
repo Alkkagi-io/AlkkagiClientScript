@@ -59,13 +59,33 @@ InputManager.prototype.update = function (dt) {
     var spacePressed = this.app.keyboard && this.app.keyboard.isPressed(pc.KEY_SPACE);
     var attackPressed = mousePressed || spacePressed;
 
+    if (this.isCharging) {
+        var dir = this._getAimDirection2D();
+        if (dir.length() === 0) {
+            dir.copy(this._lastNonZeroDir);
+        }
+        if (dir.length() === 0) {
+            dir.set(1, 0);
+        }
+        dir.normalize();
+        const myPlayer = gameManager.getEntity(gameManager.playerEntityID)
+        if (myPlayer)
+            myPlayer.script.myPlayerComponent.handleChargingUpdate(dir);
+    }
+
     if (attackPressed && !this.isCharging) {
         // 공격 시작
+        const myPlayer = gameManager.getEntity(gameManager.playerEntityID)
+        if (myPlayer)
+            myPlayer.script.myPlayerComponent.handleChargingStart();
         gameManager.networkManager.send(new AlkkagiSharedBundle.C2S_StartAttackChargingPacket());
         this.isCharging = true;
         console.log('[InputManager] Start Attack');
     } else if (!attackPressed && this.isCharging) {
         // 공격 종료
+        const myPlayer = gameManager.getEntity(gameManager.playerEntityID)
+        if (myPlayer)
+            myPlayer.script.myPlayerComponent.handleChargingEnd();
         var dir = this._getAimDirection2D();
         if (dir.length() === 0) {
             dir.copy(this._lastNonZeroDir);
