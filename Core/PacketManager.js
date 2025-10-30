@@ -14,6 +14,7 @@
         packetManager.on(AlkkagiSharedBundle.EPacketID.S2C_EnterWorldResponse, AlkkagiSharedBundle.S2C_EnterWorldResponsePacket, S2C_EnterWorldResponsePacketHandler);
         packetManager.on(AlkkagiSharedBundle.EPacketID.S2C_CharacterLevelUp, AlkkagiSharedBundle.S2C_CharacterLevelUpPacket, S2C_CharacterLevelUpPacketHandler);
         packetManager.on(AlkkagiSharedBundle.EPacketID.S2C_CharacterStatLevelUpResponse, AlkkagiSharedBundle.S2C_CharacterStatLevelUpResponsePacket, S2C_CharacterStatLevelUpResponsePacketHandler);
+        packetManager.on(AlkkagiSharedBundle.EPacketID.S2C_UpdateRankingPacket, AlkkagiSharedBundle.S2C_UpdateRankingPacket, S2C_UpdateRankingPacketHandler)
 
         packetManager.injectHandlerArgs(gameManager, networkManager);
     }
