@@ -18,7 +18,7 @@ RankingPanel.prototype.handleUpdateRanking = function(rankPlayerIds, rankPlayerS
             continue
         }
 
-        elem.set(this.getScoreText(rankPlayer.script.entityComponent.entityData.name, rankPlayerScores[i]));
+        elem.set(this.getScoreText(rankPlayer.script.entityComponent.entityStaticData.name, rankPlayerScores[i]));
     }
 }
 
@@ -27,7 +27,7 @@ RankingPanel.prototype.updateMyScore = function(score) {
     if (!myEntity)
         return;
 
-    const name = myEntity.script.entityComponent.entityData.name;
+    const name = myEntity.script.entityComponent.entityStaticData.name;
     this.myRankElem.script.RankElement.set(this.getScoreText(name, score));
 };  
 

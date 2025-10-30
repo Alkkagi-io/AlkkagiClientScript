@@ -29,11 +29,11 @@ InGameScreen.prototype.init = function(name) {
 
 InGameScreen.prototype.handlePlayerUpdate = function() {
     const entity = window.gameManager.getEntity(window.gameManager.playerEntityID);
-    const entityData = entity.script.entityComponent.entityData;
+    const entityDynamicData = entity.script.entityComponent.entityDynamicData;
 
     // this.setLevel(playerEntityData.level);
-    this.rankingPanel.script.RankingPanel.updateMyScore(entityData.score);
-    this.handlePlayerXPUpdate(entityData.exp);
+    this.rankingPanel.script.RankingPanel.updateMyScore(entityDynamicData.score);
+    this.handlePlayerXPUpdate(entityDynamicData.exp);
 }
 
 InGameScreen.prototype.handlePlayerXPUpdate = function(totalXP) {

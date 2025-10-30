@@ -12,7 +12,7 @@ Bootstrap.prototype.initialize = async function() {
     }
 
     await ResourceManager.initialize();
-    this.RegisterFactory(AlkkagiSharedBundle.EEntityType.Character);
+    this.RegisterFactory(AlkkagiSharedBundle.EEntityType.BotPlayer);
     this.RegisterFactory(AlkkagiSharedBundle.EEntityType.XPObject);
     this.RegisterFactory(AlkkagiSharedBundle.EEntityType.XPContainer);
     this.RegisterFactory(AlkkagiSharedBundle.EEntityType.GoldContainer);
@@ -21,7 +21,7 @@ Bootstrap.prototype.initialize = async function() {
     // const networkOptions = createNetworkOptions({ address: 'wss://alkkagidev.plasticpipe.tube:9696/ws' });
     const networkOptions = createNetworkOptions({ address: 'ws://localhost:3000/ws' });
     const networkManager = new NetworkManager(networkOptions);
-    networkManager.on('connected', this.onConnected.bind(this), this);
+    networkManager.events.on('connected', this.onConnected.bind(this), this);
 
     window.gameManager = new GameManager(networkManager);
 

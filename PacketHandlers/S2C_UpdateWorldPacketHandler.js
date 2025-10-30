@@ -1,18 +1,24 @@
 (function (root) {
     class S2C_UpdateWorldPacketHandler extends ClientPacketHandler {
         handle(packet) {
-            packet.entityDatas.forEach(entityData => {
-                const entity = this.gameManager.getOrCreateEntity(entityData);
-                entity.script.entityComponent.updateEntityData(packet.elapsedMS, entityData);
-                if (entity.script.myPlayerComponent) {
-                    entity.script.myPlayerComponent.handleUpdateEntityData();
-                }
-                if (entityData instanceof AlkkagiSharedBundle.DamagableEntityData && entity.script.damagableEntityComponent) {
-                    entity.script.damagableEntityComponent.handleChangeHp(entityData.hpPer);
-                }
+
+            packet.appearedEntityStaticDatas.forEach(entityStaticData => {
+                this.gameManager.createEntity(entityStaticData);
             });
 
-            this.gameManager.clear();
+            packet.nearbyEntityDynamicDatas.forEach(entityDynamicData => {
+                const entity = this.gameManager.getEntity(entityDynamicData.entityID);
+                if(entity == null) {
+                    return;
+                }
+
+                const entityComponent = entity.script.entityComponent;
+                entityComponent?.updateEntityData(packet.elapsedMS, entityDynamicData);
+            });
+
+            packet.disappearedEntityIDs.forEach(entityID => {
+                this.gameManager.removeEntity(entityID);
+            });
         }
     }
 

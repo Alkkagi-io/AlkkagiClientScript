@@ -5,39 +5,32 @@
             this.networkManager = networkManager;
             this.playerEntityID = -1;
 
-            this._entities = {};
+            this._entities = new Map();
             this._dirtiedEntityIDs = new Set();
 
         }
 
-        getEntity(entityID) {
-            return this._entities[entityID];
-        }
-
-        getOrCreateEntity(entityData) {
-            let entity = this._entities[entityData.entityID];
-            if(entity == null) {
-                entity = EntityFactory.createEntity(entityData); 
-                this._entities[entityData.entityID] = entity;
+        createEntity(entityStaticData) {
+            if(this._entities.has(entityStaticData.entityID)) {
+                return;
             }
 
-            this._dirtiedEntityIDs.add(entityData.entityID);
-            return entity;
+            const entity = EntityFactory.createEntity(entityStaticData); 
+            this._entities.set(entityStaticData.entityID, entity);
         }
 
-        clear() {
-            Object.values(this._entities).forEach(entity => {
-                const entityComponent = entity.script.entityComponent;
-                const entityID = entityComponent.entityData.entityID;
-                if(this._dirtiedEntityIDs.has(entityID)) {
-                    return;
-                }
+        getEntity(entityID) {
+            return this._entities.get(entityID);
+        }
 
-                entity.destroy();
-                delete this._entities[entityID];
-            });
+        removeEntity(entityID) {
+            const entity = this._entities.get(entityID);
+            if(entity == null) {
+                return;
+            }
 
-            this._dirtiedEntityIDs.clear();
+            entity.destroy();
+            this._entities.delete(entityID);
         }
     }
 

@@ -9,20 +9,23 @@
             this.entityFactories[entityType] = entityTemplate;
         }
     
-        static createEntity(entityData) {
-            if(entityData.entityType == AlkkagiSharedBundle.EEntityType.None) {
+        static createEntity(entityStaticData) {
+            if(entityStaticData.entityType == AlkkagiSharedBundle.EEntityType.None) {
                 throw new Error(`Entity type is not set`);
             }
     
-            const factory = this.entityFactories[entityData.entityType];
+            const factory = this.entityFactories[entityStaticData.entityType];
             if(factory == null) {
-                throw new Error(`EntityFactory for entityType ${entityData.entityType} not found`);
+                throw new Error(`EntityFactory for entityType ${entityStaticData.entityType} not found`);
             }
 
             const entity = factory.resource.instantiate();
-            root.pc.Application.getApplication().root.addChild(entity);
+            const entityComponent = entity.script.entityComponent;
+            entityComponent.entityStaticData = entityStaticData;
 
-            entity.script.entityComponent.initializeEntity(entityData);
+            const app = root.pc.Application.getApplication();
+            app.root.addChild(entity);            
+
             return entity;
         }
     }

@@ -5,36 +5,32 @@ MyPlayerComponent.prototype.initialize = function() {
     this.atkChagingInner = this.entity.findByName('InnerArrow');
     this.atkCoolTimeGauge = this.entity.findByName('AtkCooltimeGauge');
     this.atkCoolTimeGauge.script.dynamicGaugeElement.maxValue = 1;
+
+    const entityComponent = this.entity.script.entityComponent;
+    entityComponent.getEvents().on('entityInitialized', this.onEntityInitialized.bind(this));
+    entityComponent.getEvents().on('entityUpdated', this.onEntityUpdated.bind(this));
 }
 
-MyPlayerComponent.prototype.init = function() {
-    const entityData = this.entity.script.entityComponent.entityData;
-    if (!entityData)
-        return;
-
+MyPlayerComponent.prototype.onEntityInitialized = function(entityStaticData) {
     const screen = uiManager.getScreen('ingame');
     if (!screen)
         return;
 
-    screen.script.inGameScreen.init(entityData.name);
+    screen.script.inGameScreen.init(entityStaticData.name);
 };
 
-MyPlayerComponent.prototype.handleUpdateEntityData = function() {
-    const entityData = this.entity.script.entityComponent.entityData;
-    if (!entityData)
-        return;
-
+MyPlayerComponent.prototype.onEntityUpdated = function(elapsedMS, prevEntityDynamicData, entityDynamicData) {
     const screen = uiManager.getScreen('ingame');
     if (!screen) 
         return;
 
     screen.script.inGameScreen.handlePlayerUpdate();
 
-    const remainCooltimePer = entityData.remainAtkCoolPer / 100;
+    const remainCooltimePer = entityDynamicData.remainAtkCoolPer / 100;
     this.atkCoolTimeGauge.enabled = remainCooltimePer > 0;
     this.atkCoolTimeGauge.script.dynamicGaugeElement.setGauge(remainCooltimePer);
     
-    const chargingPer = entityData.chargingPer / 100;
+    const chargingPer = entityDynamicData.chargingPer / 100;
     this.atkChagingInner.setLocalScale(chargingPer, chargingPer, 1);
 };
 
