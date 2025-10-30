@@ -13,7 +13,7 @@
                 }
 
                 const entityComponent = entity.script.entityComponent;
-                entityComponent?.updateEntityData(packet.elapsedMS, entityDynamicData);
+                entityComponent?.updateEntity(packet.elapsedMS, entityDynamicData);
             });
 
             packet.disappearedEntityIDs.forEach(entityID => {

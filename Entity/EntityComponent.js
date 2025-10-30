@@ -18,7 +18,7 @@ EntityComponent.prototype.initializeEntity = function(entityStaticData) {
     this.getEvents().emit('entityInitialized', this.entityStaticData);
 };
 
-EntityComponent.prototype.updateEntityData = function(elapsedMS, entityDynamicData) {
+EntityComponent.prototype.updateEntity = function(elapsedMS, entityDynamicData) {
     const prevEntityDynamicData = this.entityDynamicData;
     this.entityDynamicData = entityDynamicData;
     this.getEvents().emit('entityUpdated', elapsedMS, prevEntityDynamicData, this.entityDynamicData);
