@@ -1,5 +1,6 @@
 const Bootstrap = pc.createScript('bootstrap');
 
+Bootstrap.attributes.add('mainCamera', { type: 'entity' });
 Bootstrap.attributes.add('entityTemplates', { type: 'asset', assetType: 'template', array: true });
 
 Bootstrap.prototype.initialize = async function() {
@@ -23,7 +24,7 @@ Bootstrap.prototype.initialize = async function() {
     const networkManager = new NetworkManager(networkOptions);
     networkManager.events.on('connected', this.onConnected.bind(this), this);
 
-    window.gameManager = new GameManager(networkManager);
+    window.gameManager = new GameManager(networkManager, this.mainCamera);
 
     buildPacketManager(window.gameManager, networkManager);
 
