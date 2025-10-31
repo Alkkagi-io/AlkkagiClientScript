@@ -6,7 +6,6 @@ StaticEntityComponent.prototype.initialize = function() {
 }
 
 StaticEntityComponent.prototype.onEntityInitialized = function(entityStaticData) {
-    console.log('onEntityInitialized' + JSON.stringify(entityStaticData));
     const position = new pc.Vec3(entityStaticData.position.x, entityStaticData.position.y, 0);
     this.entity.setPosition(position);
 }
