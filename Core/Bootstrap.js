@@ -22,7 +22,7 @@ Bootstrap.prototype.initialize = async function() {
     // const networkOptions = createNetworkOptions({ address: 'wss://alkkagidev.plasticpipe.tube:9696/ws' });
     const networkOptions = createNetworkOptions({ address: 'ws://localhost:3000/ws' });
     const networkManager = new NetworkManager(networkOptions);
-    networkManager.events.on('connected', this.onConnected.bind(this), this);
+    networkManager.events.on('connected', this.onConnected, this);
 
     window.gameManager = new GameManager(networkManager, this.mainCamera);
 

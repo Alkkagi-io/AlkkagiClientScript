@@ -7,8 +7,8 @@ MyPlayerComponent.prototype.initialize = function() {
     this.atkCoolTimeGauge.script.dynamicGaugeElement.maxValue = 1;
 
     const entityComponent = this.entity.script.entityComponent;
-    entityComponent.getEvents().on('entityInitialized', this.onEntityInitialized.bind(this));
-    entityComponent.getEvents().on('entityUpdated', this.onEntityUpdated.bind(this));
+    entityComponent.getEvents().on('entityInitialized', this.onEntityInitialized, this);
+    entityComponent.getEvents().on('entityUpdated', this.onEntityUpdated, this);
 }
 
 MyPlayerComponent.prototype.onEntityInitialized = function(entityStaticData) {

@@ -6,8 +6,8 @@ EntityMoveComponent.prototype.initialize = function() {
     this._velocity = new pc.Vec3();
 
     const entityComponent = this.entity.script.entityComponent;
-    entityComponent.getEvents().on('entityInitialized', this.onEntityInitialized.bind(this));
-    entityComponent.getEvents().on('entityUpdated', this.onEntityUpdated.bind(this));
+    entityComponent.getEvents().on('entityInitialized', this.onEntityInitialized, this);
+    entityComponent.getEvents().on('entityUpdated', this.onEntityUpdated, this);
 };
 
 EntityMoveComponent.prototype.update = function(dt) {
