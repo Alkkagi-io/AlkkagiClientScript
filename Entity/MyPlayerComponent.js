@@ -41,6 +41,9 @@ MyPlayerComponent.prototype.handleLevelUp = function(level, levelUpPoint) {
 
     screen.script.inGameScreen.setLevel(level);
     screen.script.inGameScreen.handleUpdatePlayerLevelUpPoint(levelUpPoint);
+
+    const soundComponent = this.entity.script.entitySoundComponent;
+    soundComponent?.playSound('levelup');
 };
 
 MyPlayerComponent.prototype.handleStatLevelUp = function(type, level, remainLevelUpPoint) {
