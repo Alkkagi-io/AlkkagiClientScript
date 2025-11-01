@@ -12,13 +12,13 @@ RankingPanel.attributes.add('rankElems', {
 RankingPanel.prototype.handleUpdateRanking = function(rankPlayerIds, rankPlayerScores) {
     for (let i = 0; i < this.rankElems.length; i++) {
         const elem = this.rankElems[i].script.RankElement;
-        const rankPlayer = window.gameManager.getEntity(rankPlayerIds[i]);
-        if (rankPlayer == null) {
+        const rankPlayerData = window.gameManager.getWorldData(rankPlayerIds[i]);
+        if (rankPlayerData == null) {
             elem.set('-');
             continue
         }
 
-        elem.set(this.getScoreText(rankPlayer.script.entityComponent.entityStaticData.name, rankPlayerScores[i]));
+        elem.set(this.getScoreText(rankPlayerData.name, rankPlayerScores[i]));
     }
 }
 

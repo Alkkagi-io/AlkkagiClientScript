@@ -1,13 +1,21 @@
 (function (root) {
     class GameManager /* extends EventEmitter */ {
-        constructor(networkManager, mainCamera) {
+        constructor(networkManager) {
             // super();
             this.networkManager = networkManager;
-            this.mainCamera = mainCamera;
             this.playerEntityID = -1;
 
             this._entities = new Map();
+            this._worldPlayerData = new Map();
             this._dirtiedEntityIDs = new Set();
+        }
+
+        handleAddPlayer(worldPlayerData) {
+            this._worldPlayerData.set(worldPlayerData.entityID, worldPlayerData);
+        }
+
+        handleRemovePlayer(playerId) {
+            this._worldPlayerData.delete(playerId);
         }
 
         createEntity(entityStaticData) {
@@ -21,6 +29,10 @@
 
         getEntity(entityID) {
             return this._entities.get(entityID);
+        }
+
+        getWorldData(entityId) {
+            return this._worldPlayerData.get(entityId);
         }
 
         removeEntity(entityID) {
