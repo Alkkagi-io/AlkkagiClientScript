@@ -33,6 +33,10 @@ EntitySoundComponent.attributes.add('soundLibrary', {
 EntitySoundComponent.prototype.initialize = function() {
     this.soundMap = new Map();
     this.soundTable.forEach(soundTableRow => {
+        if(this.soundMap.has(soundTableRow.soundSlot) == false) {
+            this.soundMap.set(soundTableRow.soundSlot, []);
+        }
+
         if(soundTableRow.soundIndex < 0 || soundTableRow.soundIndex >= this.soundLibrary.length) {
             return;
         }
@@ -42,7 +46,7 @@ EntitySoundComponent.prototype.initialize = function() {
             return;
         }
 
-        this.soundMap.set(soundTableRow.soundSlot, soundAsset);
+        this.soundMap.get(soundTableRow.soundSlot).push(soundAsset);
     });
 };
 
@@ -53,7 +57,12 @@ EntitySoundComponent.prototype.playSound = function(soundSlot) {
     const volume2d = this.inverseAttenuation(distance2d, this.minDistance, this.maxDistance) * this.volume;
     // console.log(`sound slot: ${soundSlot}, distance2d: ${distance2d}, minDistance: ${this.minDistance}, maxDistance: ${this.maxDistance}, volume2d: ${volume2d}`);
 
-    const soundAsset = this.soundMap.get(soundSlot);
+    const soundAssets = this.soundMap.get(soundSlot);
+    if(soundAssets == null || soundAssets.length == 0) {
+        return;
+    }
+
+    const soundAsset = soundAssets[AlkkagiSharedBundle.Random.rangeInt(0, soundAssets.length)];
     AudioManager.playSound(soundAsset, volume2d);
 };
 
