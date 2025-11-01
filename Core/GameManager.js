@@ -1,8 +1,9 @@
 (function (root) {
     class GameManager /* extends EventEmitter */ {
-        constructor(networkManager) {
+        constructor(networkManager, mainCamera) {
             // super();
             this.networkManager = networkManager;
+            this.mainCamera = mainCamera;
             this.playerEntityID = -1;
 
             this._entities = new Map();
