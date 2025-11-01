@@ -11,4 +11,5 @@ StaticEntityComponent.prototype.onEntityInitialized = function(entityStaticData)
 
     const scale = entityStaticData.scale;
     this.entity.setLocalScale(scale, scale, scale);
+    this.entity.collision.radius = scale + 0.1;
 }

@@ -28,6 +28,7 @@ CharacterEntityComponent.prototype.onEntityUpdated = function(elapsedMS, prevEnt
     if (Math.abs(entityDynamicData.scale - curScale) > SCALE_THRESHOLD) {
         const scale = entityDynamicData.scale;
         this.entity.setLocalScale(scale, scale, scale);
+        this.entity.collision.radius = scale + 0.1;
     }
 
     if(entityDynamicData.hpPer / 100 > 0) {
