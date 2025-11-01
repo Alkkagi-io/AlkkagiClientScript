@@ -16,7 +16,7 @@ MyPlayerComponent.prototype.onEntityInitialized = function(entityStaticData) {
     if (!screen)
         return;
 
-    screen.script.inGameScreen.init(gamemanager.myname);
+    screen.script.inGameScreen.init(gameManager.myname);
 };
 
 MyPlayerComponent.prototype.onEntityUpdated = function(elapsedMS, prevEntityDynamicData, entityDynamicData) {
