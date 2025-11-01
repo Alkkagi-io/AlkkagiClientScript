@@ -20,9 +20,10 @@ StatLevelElementUI.prototype.init = function(statId) {
     this.statId = statId;  
     this.button.button.on('click', event => {
         this.onClickUpgrade();
+        uiManager.playUISound('default_button_click');
     });
 
-    const res = window.AlkkagiSharedBundle.ResourceStatLevelUp.get(this.statId);
+    const res = AlkkagiSharedBundle.ResourceStatLevelUp.get(this.statId);
     if (!res)
         return;
 
@@ -36,7 +37,7 @@ StatLevelElementUI.prototype.reload = function(curLevel) {
         return;
     this.level = curLevel;
 
-    const res = window.AlkkagiSharedBundle.ResourceStatLevelUp.get(this.statId);
+    const res = AlkkagiSharedBundle.ResourceStatLevelUp.get(this.statId);
     if (!res)
         return;
 
@@ -44,5 +45,5 @@ StatLevelElementUI.prototype.reload = function(curLevel) {
 };
 
 StatLevelElementUI.prototype.onClickUpgrade = function() {
-    window.gameManager.networkManager.send(new window.AlkkagiSharedBundle.C2S_CharacterStatLevelUpRequestPacket(this.statId));
+    gameManager.networkManager.send(new AlkkagiSharedBundle.C2S_CharacterStatLevelUpRequestPacket(this.statId));
 };

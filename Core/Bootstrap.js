@@ -3,9 +3,38 @@ const Bootstrap = pc.createScript('bootstrap');
 Bootstrap.attributes.add('mainCamera', { type: 'entity' });
 Bootstrap.attributes.add('entityTemplates', { type: 'asset', assetType: 'template', array: true });
 
+Bootstrap.attributes.add('uiSoundTable', {
+    type: 'json',
+    array: true,
+    schema: [
+        { name: 'soundSlot', type: 'string' },
+        { name: 'soundIndex', type: 'number' }
+    ]
+});
+
+Bootstrap.attributes.add('uiSoundLibrary', {
+    type: 'asset',
+    assetType: 'audio',
+    array: true
+});
+
 Bootstrap.prototype.initialize = async function() {
+    const uiSoundMap = new Map();
+    this.uiSoundTable.forEach(soundTableRow => {
+        if(soundTableRow.soundIndex < 0 || soundTableRow.soundIndex >= this.uiSoundLibrary.length) {
+            return;
+        }
+
+        const soundAsset = this.uiSoundLibrary[soundTableRow.soundIndex];
+        if(soundAsset == null) {
+            return;
+        }
+
+        uiSoundMap.set(soundTableRow.soundSlot, soundAsset);
+    });
+
     // SharedBundle 로드 전 먼저 등록
-    window.uiManager = new UIManager();
+    window.uiManager = new UIManager(uiSoundMap);
 
     // AlkkagiSharedBundle이 로드될 때까지 대기
     while (window.AlkkagiSharedBundle == null) {

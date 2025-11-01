@@ -1,7 +1,8 @@
 (function (root) {
     class UIManager {
-        constructor() {
+        constructor(uiSoundMap) {
             this.screens = {};
+            this._uiSoundMap = uiSoundMap;
         }
 
         // type: title, ingame, result
@@ -11,6 +12,11 @@
 
         getScreen(type) {
             return this.screens[type];
+        }
+
+        playUISound(soundSlot) {
+            const soundAsset = this._uiSoundMap.get(soundSlot);
+            AudioManager.playSound(soundAsset, 1);
         }
     }
 
