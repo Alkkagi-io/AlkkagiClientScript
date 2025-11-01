@@ -11,7 +11,7 @@
         }
 
         static async _getJsonData(fileName) {
-            const path = `https://cdn.jsdelivr.net/gh/Alkkagi-io/AlkkagiData@main/${fileName}`;
+            const path = `${Define.CDN_ADDRESS}/${fileName}`;
             const res = await fetch(path);
             const json = await res.json();
             return JSON.stringify(json);

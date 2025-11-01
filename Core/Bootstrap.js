@@ -36,11 +36,7 @@ Bootstrap.prototype.initialize = async function() {
     // SharedBundle 로드 전 먼저 등록
     window.uiManager = new UIManager(uiSoundMap);
 
-    // AlkkagiSharedBundle이 로드될 때까지 대기
-    while (window.AlkkagiSharedBundle == null) {
-        await new Promise(resolve => setTimeout(resolve, 100));
-    }
-
+    await SharedCodeLoader.initialize();
     await ResourceManager.initialize();
     this.RegisterFactory(AlkkagiSharedBundle.EEntityType.BotPlayer);
     this.RegisterFactory(AlkkagiSharedBundle.EEntityType.XPObject);
@@ -48,8 +44,7 @@ Bootstrap.prototype.initialize = async function() {
     this.RegisterFactory(AlkkagiSharedBundle.EEntityType.GoldContainer);
     this.RegisterFactory(AlkkagiSharedBundle.EEntityType.Player);
     
-    // const networkOptions = createNetworkOptions({ address: 'wss://alkkagidev.plasticpipe.tube:9696/ws' });
-    const networkOptions = createNetworkOptions({ address: 'ws://localhost:3000/ws' });
+    const networkOptions = createNetworkOptions({ address: Define.WS_ADDRESS });
     const networkManager = new NetworkManager(networkOptions);
     networkManager.events.on('connected', this.onConnected, this);
 
