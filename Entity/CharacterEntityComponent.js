@@ -1,5 +1,7 @@
 const CharacterEntityComponent = pc.createScript('characterEntityComponent');
 
+const SCALE_THRESHOLD = 0.05;
+
 CharacterEntityComponent.prototype.initialize = function() {
     const entityComponent = this.entity.script.entityComponent;
     entityComponent.getEvents().on('entityInitialized', this.onEntityInitialized, this);
@@ -13,11 +15,19 @@ CharacterEntityComponent.prototype.initialize = function() {
 };
 
 CharacterEntityComponent.prototype.onEntityInitialized = function(entityStaticData) {
+    const scale = entityStaticData.scale;
+    this.entity.setLocalScale(scale, scale, scale);
 }
 
 CharacterEntityComponent.prototype.onEntityUpdated = function(elapsedMS, prevEntityDynamicData, entityDynamicData) {
     if(this.isDead) {
         return;
+    }
+
+    const curScale = this.entity.getLocalScale().x;
+    if (Math.abs(entityDynamicData.scale - curScale) > SCALE_THRESHOLD) {
+        const scale = entityDynamicData.scale;
+        this.entity.setLocalScale(scale, scale, scale);
     }
 
     if(entityDynamicData.hpPer / 100 > 0) {

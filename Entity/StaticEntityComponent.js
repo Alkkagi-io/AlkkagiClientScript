@@ -8,4 +8,7 @@ StaticEntityComponent.prototype.initialize = function() {
 StaticEntityComponent.prototype.onEntityInitialized = function(entityStaticData) {
     const position = new pc.Vec3(entityStaticData.position.x, entityStaticData.position.y, 0);
     this.entity.setPosition(position);
+
+    const scale = entityStaticData.scale;
+    this.entity.setLocalScale(scale, scale, scale);
 }
