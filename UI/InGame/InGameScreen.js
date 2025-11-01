@@ -47,13 +47,15 @@ InGameScreen.prototype.handleUpdatePlayerLevelUpPoint = function(levelUpPoint) {
 InGameScreen.prototype.setLevel = function(level) {
     const res = window.AlkkagiSharedBundle.ResourceCharacterLevel.get(level);
     if (res) {
-        this.levelGauge.script.GaugeElement.maxValue = res.requiredXP;
+        const prevRes = window.AlkkagiSharedBundle.ResourceCharacterLevel.get(level - 1);
+        let offset = 0;
+        if (prevRes) {
+            offset = prevRes.requiredXP;
+        }
+
+        this.levelGauge.script.GaugeElement.maxValue = res.requiredXP - offset;
+        this.levelGauge.script.GaugeElement.offset = offset;
         this.levelGauge.script.GaugeElement.setGauge(0);
         this.levelGauge.script.GaugeElement.setText(`Level ${res.level}`);
-
-        const prevRes = window.AlkkagiSharedBundle.ResourceCharacterLevel.get(level - 1);
-        if (prevRes) {
-            this.levelGauge.script.GaugeElement.offset = prevRes.requiredXP;
-        }
     }
 }
