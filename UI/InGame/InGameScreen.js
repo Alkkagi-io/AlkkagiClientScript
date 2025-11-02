@@ -18,6 +18,7 @@ InGameScreen.attributes.add('rankingPanel', {
 
 InGameScreen.prototype.postInitialize = function() {
     uiManager.addScreen('ingame', this.entity);
+    this.entity.enabled = false;
 }
 
 InGameScreen.prototype.init = function(name) {

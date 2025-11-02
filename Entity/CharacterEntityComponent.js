@@ -14,6 +14,11 @@ CharacterEntityComponent.prototype.initialize = function() {
     this.isDead = false;
 };
 
+CharacterEntityComponent.prototype.getEvents = function() {
+    this.events ??= new EventEmitter();
+    return this.events;
+};
+
 CharacterEntityComponent.prototype.onEntityInitialized = function(entityStaticData) {
     const scale = entityStaticData.scale;
     this.entity.setLocalScale(scale, scale, scale);
@@ -52,6 +57,8 @@ CharacterEntityComponent.prototype.onCollisionStart = function(result) {
         return;
     }
 
+    this.lastCollisionEntity = result.other;
+
     const soundComponent = result.other.script.entitySoundComponent;
     soundComponent?.playSound('collision');
 };
@@ -61,6 +68,8 @@ CharacterEntityComponent.prototype._die = function() {
 
     const soundComponent = this.entity.script.entitySoundComponent;
     soundComponent?.playSound('dead');
+
+    this.getEvents().emit('onDie', this.lastCollisionEntity);
 
     // 필요시 연출 추가
     // 직접적으로 destroy를 호출해선 안 된다.

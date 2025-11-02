@@ -5,14 +5,19 @@ MyPlayerComponent.prototype.initialize = function() {
     this.atkChagingInner = this.entity.findByName('InnerArrow');
     this.atkCoolTimeGauge = this.entity.findByName('AtkCooltimeGauge');
     this.atkCoolTimeGauge.script.dynamicGaugeElement.maxValue = 1;
+    this.score = 0;
+    this.level = 1;
 
     const entityComponent = this.entity.script.entityComponent;
     entityComponent.getEvents().on('entityInitialized', this.onEntityInitialized, this);
     entityComponent.getEvents().on('entityUpdated', this.onEntityUpdated, this);
+
+    const characterEntityComponent = this.entity.script.characterEntityComponent;
+    characterEntityComponent.getEvents().on('onDie', this.onDie, this);
 }
 
 MyPlayerComponent.prototype.onEntityInitialized = function(entityStaticData) {
-    const screen = uiManager.getScreen('ingame');
+    const screen = uiManager.showScreen('ingame');
     if (!screen)
         return;
 
@@ -24,6 +29,7 @@ MyPlayerComponent.prototype.onEntityUpdated = function(elapsedMS, prevEntityDyna
     if (!screen) 
         return;
 
+    this.score = entityDynamicData.score;
     screen.script.inGameScreen.handlePlayerUpdate();
 
     const remainCooltimePer = entityDynamicData.remainAtkCoolPer / 100;
@@ -34,11 +40,19 @@ MyPlayerComponent.prototype.onEntityUpdated = function(elapsedMS, prevEntityDyna
     this.atkChagingInner.setLocalScale(chargingPer, chargingPer, 1);
 };
 
+MyPlayerComponent.prototype.onDie = function(killerEntity) {
+    const resultScreen = uiManager.showScreen('result');
+    resultScreen.script.resultScreen.show(killerEntity, {
+        score: this.score, level: this.level
+    });
+};
+
 MyPlayerComponent.prototype.handleLevelUp = function(level, levelUpPoint) {
     const screen = uiManager.getScreen('ingame');
     if (!screen) 
         return;
 
+    this.level = level;
     screen.script.inGameScreen.setLevel(level);
     screen.script.inGameScreen.handleUpdatePlayerLevelUpPoint(levelUpPoint);
 

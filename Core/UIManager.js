@@ -3,6 +3,7 @@
         constructor(uiSoundMap) {
             this.screens = {};
             this._uiSoundMap = uiSoundMap;
+            this._currentScreen = null;
         }
 
         // type: title, ingame, result
@@ -17,6 +18,17 @@
         playUISound(soundSlot) {
             const soundAsset = this._uiSoundMap.get(soundSlot);
             AudioManager.playSound(soundAsset, 1);
+        }
+
+        showScreen(type) {
+            if (this._currentScreen) {
+                this._currentScreen.enabled = false;
+                this._currentScreen = null;
+            }
+
+            this._currentScreen = this.getScreen(type);
+            this._currentScreen.enabled = true;
+            return this._currentScreen;
         }
     }
 
