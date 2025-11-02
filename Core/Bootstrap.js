@@ -59,8 +59,7 @@ Bootstrap.prototype.initialize = async function() {
 };
 
 Bootstrap.prototype.onConnected = function() {
-    gameManager.myname = "myname";
-    window.gameManager.networkManager.send(new AlkkagiSharedBundle.C2S_EnterWorldRequestPacket(gameManager.myname));
+    uiManager.showScreen('title');
 };
 
 Bootstrap.prototype.RegisterFactory = function(type) {

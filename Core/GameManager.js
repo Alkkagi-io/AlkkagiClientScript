@@ -11,6 +11,15 @@
             this._dirtiedEntityIDs = new Set();
         }
 
+        enterGame(name) {
+            if (!name || name.length === 0 || name.length > 8) {
+                return;
+            }
+
+            this.myname = name;
+            this.networkManager.send(new AlkkagiSharedBundle.C2S_EnterWorldRequestPacket(this.myname));
+        }
+
         handleAddPlayer(worldPlayerData) {
             this._worldPlayerData.set(worldPlayerData.entityID, worldPlayerData);
         }
