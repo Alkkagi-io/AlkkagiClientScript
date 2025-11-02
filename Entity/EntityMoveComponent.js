@@ -35,3 +35,7 @@ EntityMoveComponent.prototype.onEntityUpdated = function(elapsedMS, prevEntityDy
 EntityMoveComponent.prototype._to3D = function (p2) {
     return new pc.Vec3(p2.x, p2.y, 0);
 };
+
+EntityMoveComponent.prototype.getVelocity = function() {
+    return this._velocity;
+}

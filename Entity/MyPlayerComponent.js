@@ -1,5 +1,7 @@
 const MyPlayerComponent = pc.createScript('myPlayerComponent');
 
+const MOVE_THRESHOLD = 0.05;
+
 MyPlayerComponent.prototype.initialize = function() {
     this.atkDirGroup = this.entity.findByName('AtkDirGroup');
     this.atkChagingInner = this.entity.findByName('InnerArrow');
@@ -17,7 +19,7 @@ MyPlayerComponent.prototype.initialize = function() {
 
     const entityComponent = this.entity.script.entityComponent;
     entityComponent.getEvents().on('entityInitialized', this.onEntityInitialized, this);
-    entityComponent.getEvents().on('entityUpdated', this.onEntityUpdated, this);
+    entityComponent.getEvents().on('entityUpdated', this.onEntityUpdated, this, 100);
 
     const characterEntityComponent = this.entity.script.characterEntityComponent;
     characterEntityComponent.getEvents().on('onDie', this.onDie, this);
@@ -53,6 +55,13 @@ MyPlayerComponent.prototype.onEntityUpdated = function(elapsedMS, prevEntityDyna
 
     this.score = entityDynamicData.score;
     screen.script.inGameScreen.handlePlayerUpdate();
+
+    const moveComponent = this.entity.scripts.entityMoveComponent;
+    if (moveComponent.getVelocity().lengthSq() > MOVE_THRESHOLD) {
+        handleChargingEnd();
+        this.canAttack = true;
+        this.atkCoolTimeGauge.enabled = false;
+    }
 
     if (!this.charging && this.remainAtkCooltime > 0) {
         this.remainAtkCooltime -= elapsedMS / 1000;
