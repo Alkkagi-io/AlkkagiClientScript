@@ -36,9 +36,33 @@ var CameraManager = (function() {
                 return;
             }
             
+            if (!cameraEntity) {
+                console.error('CameraManager: cameraEntity is null or undefined');
+                return;
+            }
+            
             this.camera = cameraEntity;
-            this._initialPosition.copy(this.camera.getPosition());
-            this._initialRotation.copy(this.camera.getRotation());
+            
+            const initialPos = this.camera.getPosition();
+            if (!initialPos || !Number.isFinite(initialPos.x) || !Number.isFinite(initialPos.y) || !Number.isFinite(initialPos.z)) {
+                console.error('CameraManager: Invalid initial camera position');
+                return;
+            }
+            this._initialPosition.copy(initialPos);
+            
+            const initialRot = this.camera.getRotation();
+            if (!initialRot || 
+                !Number.isFinite(initialRot.x) || 
+                !Number.isFinite(initialRot.y) || 
+                !Number.isFinite(initialRot.z) || 
+                !Number.isFinite(initialRot.w)) {
+                console.error('CameraManager: Invalid initial camera rotation (null or invalid xyzw)');
+                // 기본 회전값으로 대체
+                this._initialRotation.set(0, 0, 0, 1);
+            } else {
+                this._initialRotation.copy(initialRot);
+            }
+            
             this._isInitialized = true;
             
             console.log('CameraManager initialized');
@@ -225,12 +249,43 @@ var CameraManager = (function() {
                 
                 const currentRotation = this.camera.getRotation();
                 
+                // 방어 코드: currentRotation이 null이거나 유효하지 않은 경우 처리
+                if (!currentRotation || 
+                    !Number.isFinite(currentRotation.x) || 
+                    !Number.isFinite(currentRotation.y) || 
+                    !Number.isFinite(currentRotation.z) || 
+                    !Number.isFinite(currentRotation.w)) {
+                    console.warn('CameraManager: Invalid currentRotation (null or invalid xyzw), skipping rotation update');
+                    return;
+                }
+                
                 const tempEntity = new pc.Entity();
                 tempEntity.setPosition(this.camera.getPosition());
                 tempEntity.lookAt(lookAtPosition.x, lookAtPosition.y, lookAtPosition.z);
                 const targetRotation = tempEntity.getRotation();
                 
+                // 방어 코드: targetRotation이 null이거나 유효하지 않은 경우 처리
+                if (!targetRotation || 
+                    !Number.isFinite(targetRotation.x) || 
+                    !Number.isFinite(targetRotation.y) || 
+                    !Number.isFinite(targetRotation.z) || 
+                    !Number.isFinite(targetRotation.w)) {
+                    console.warn('CameraManager: Invalid targetRotation (null or invalid xyzw), skipping rotation update');
+                    return;
+                }
+                
                 const newRotation = currentRotation.slerp(targetRotation, this.lookAtSpeed * dt);
+                
+                // 방어 코드: slerp 결과가 유효하지 않은 경우 처리
+                if (!newRotation || 
+                    !Number.isFinite(newRotation.x) || 
+                    !Number.isFinite(newRotation.y) || 
+                    !Number.isFinite(newRotation.z) || 
+                    !Number.isFinite(newRotation.w)) {
+                    console.warn('CameraManager: Invalid newRotation from slerp, skipping rotation update');
+                    return;
+                }
+                
                 this.camera.setRotation(newRotation);
             }
         },
