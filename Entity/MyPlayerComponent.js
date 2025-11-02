@@ -1,7 +1,5 @@
 const MyPlayerComponent = pc.createScript('myPlayerComponent');
 
-const MOVE_THRESHOLD = 0.05;
-
 MyPlayerComponent.prototype.initialize = function() {
     this.atkDirGroup = this.entity.findByName('AtkDirGroup');
     this.atkChagingInner = this.entity.findByName('InnerArrow');
@@ -56,9 +54,9 @@ MyPlayerComponent.prototype.onEntityUpdated = function(elapsedMS, prevEntityDyna
     this.score = entityDynamicData.score;
     screen.script.inGameScreen.handlePlayerUpdate();
 
-    const moveComponent = this.entity.scripts.entityMoveComponent;
-    if (moveComponent.getVelocity().lengthSq() > MOVE_THRESHOLD) {
-        handleChargingEnd();
+    const moveComponent = this.entity.script.entityMoveComponent;
+    if (this.charging && moveComponent.getVelocity().lengthSq() > MOVE_THRESHOLD) {
+        this.handleChargingEnd();
         this.canAttack = true;
         this.atkCoolTimeGauge.enabled = false;
     }
