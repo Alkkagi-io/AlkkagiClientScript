@@ -17,6 +17,11 @@
 
             return instance;
         }
+
+        static setGlobalVolume(volume) {
+            const app = root.pc.Application.getApplication();
+            app.systems.sound.volume = volume;
+        }
     }
 
     root.AudioManager = AudioManager;

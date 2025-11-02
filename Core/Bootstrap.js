@@ -19,6 +19,8 @@ Bootstrap.attributes.add('ingameUISoundLibrary', {
 });
 
 Bootstrap.prototype.initialize = async function() {
+    AudioManager.setGlobalVolume(0.1);
+
     const ingameUISoundMap = new Map();
     this.ingameUISoundTable.forEach(soundTableRow => {
         if(soundTableRow.soundIndex < 0 || soundTableRow.soundIndex >= this.ingameUISoundLibrary.length) {
