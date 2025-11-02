@@ -11,13 +11,15 @@ var CameraManager = (function() {
         this.camera = null;
         this.target = null;
         this.followSpeed = 5;
-        this.offset = new pc.Vec3(0, 10, -15);
+        this.offset = new pc.Vec3(0, 10, 0);
         this.smoothTime = 0.1;
         this.enableBoundary = false;
         this.boundary = new pc.Vec4(-100, -100, 100, 100);
         this.enableLookAt = true;
         this.lookAtOffset = new pc.Vec3(0, 0, 0);
         this.lookAtSpeed = 10;
+        this.useSimpleFollow = true;
+        this.preferredUp = new pc.Vec3(0, 1, 0);
         
         // 내부 상태 변수들
         this._smoothVelocity = new pc.Vec3();
@@ -29,6 +31,27 @@ var CameraManager = (function() {
     
     // 인스턴스 메서드들
     CameraManagerInstance.prototype = {
+        _computeFollowAlpha: function(dt) {
+            var effDt = (Number.isFinite(dt) && dt > 0) ? dt : (this.app && Number.isFinite(this.app.dt) && this.app.dt > 0 ? this.app.dt : 0.016);
+            var speed = Math.max(0, this.followSpeed || 0);
+            var alpha = 1 - Math.exp(-speed * effDt);
+            if (!Number.isFinite(alpha)) alpha = 1;
+            if (alpha < 0) alpha = 0; else if (alpha > 1) alpha = 1;
+            return alpha;
+        },
+        _safeUpFor: function(dir) {
+            if (!dir) return this.preferredUp;
+            var d = dir.clone();
+            if (d.lengthSq() === 0) return this.preferredUp;
+            d.normalize();
+            var up = this.preferredUp;
+            var dot = Math.abs(d.dot(up));
+            if (dot > 0.999) {
+                // fallback to X axis if too parallel
+                return new pc.Vec3(1, 0, 0);
+            }
+            return up;
+        },
         // 초기화
         initialize: function(cameraEntity) {
             if (this._isInitialized) {
@@ -61,6 +84,13 @@ var CameraManager = (function() {
                 this._initialRotation.set(0, 0, 0, 1);
             } else {
                 this._initialRotation.copy(initialRot);
+            }
+            
+            // 초기 FOV 저장
+            if (this.camera.camera && this.camera.camera.fov) {
+                this._initialFov = this.camera.camera.fov;
+                this.fov = this._initialFov;
+                this._targetFov = this._initialFov;
             }
             
             this._isInitialized = true;
@@ -196,7 +226,21 @@ var CameraManager = (function() {
                 
                 // 방어 코드: lookAt 위치가 비정상적인 경우 처리
                 if (Number.isFinite(lookAtPosition.x) && Number.isFinite(lookAtPosition.y) && Number.isFinite(lookAtPosition.z)) {
-                    this.camera.lookAt(lookAtPosition.x, lookAtPosition.y, lookAtPosition.z);
+                    // 안전: 기존 회전 백업 후 적용하고 유효성 검사
+                    var prevRot = this.camera.getRotation();
+                    var prevCopy = new pc.Quat();
+                    if (prevRot && typeof prevRot.x === 'number') {
+                        prevCopy.copy(prevRot);
+                    }
+                    var camPos = this.camera.getPosition();
+                    var dir = lookAtPosition.clone().sub(camPos);
+                    var upVec = this._safeUpFor(dir);
+                    this.camera.lookAt(lookAtPosition.x, lookAtPosition.y, lookAtPosition.z, upVec);
+                    var applied = this.camera.getRotation();
+                    if (!applied || !Number.isFinite(applied.x) || !Number.isFinite(applied.y) || !Number.isFinite(applied.z) || !Number.isFinite(applied.w)) {
+                        console.warn('CameraManager: Invalid rotation after lookAt in snapToTarget, reverting');
+                        this.camera.setRotation(prevCopy);
+                    }
                 } else {
                     console.warn('CameraManager: Invalid lookAt position, skipping lookAt');
                 }
@@ -205,6 +249,12 @@ var CameraManager = (function() {
         
         // 매 프레임 업데이트 (수정됨 - 방어 코드 추가)
         update: function(dt) {
+            // Debug: log current follow target name each frame
+            try {
+                var tname = this.target ? this.target.name : 'null';
+                console.error('[CameraManager] following=', this._isFollowing, ' target=', tname);
+            } catch (e) { /* noop */ }
+
             if (!this._isInitialized || this.followSpeed === 0 || !this._isFollowing || !this.target) {
                 return;
             }
@@ -227,8 +277,16 @@ var CameraManager = (function() {
             }
             
             // 위치 추적
-            let newPosition = this.smoothDamp(this.camera.getPosition(), desiredPosition, 
-                                           this._smoothVelocity, this.smoothTime);
+            let newPosition;
+            if (this.useSimpleFollow) {
+                const alpha = this._computeFollowAlpha(dt);
+                const curPos = this.camera.getPosition();
+                newPosition = new pc.Vec3();
+                newPosition.lerp(curPos, desiredPosition, alpha);
+            } else {
+                newPosition = this.smoothDamp(this.camera.getPosition(), desiredPosition, 
+                                              this._smoothVelocity, this.smoothTime);
+            }
             
             // 방어 코드: 계산된 새 위치가 비정상적인 경우 처리
             if (!Number.isFinite(newPosition.x) || !Number.isFinite(newPosition.y) || !Number.isFinite(newPosition.z)) {
@@ -260,8 +318,11 @@ var CameraManager = (function() {
                 }
                 
                 const tempEntity = new pc.Entity();
-                tempEntity.setPosition(this.camera.getPosition());
-                tempEntity.lookAt(lookAtPosition.x, lookAtPosition.y, lookAtPosition.z);
+                const camPos2 = this.camera.getPosition();
+                tempEntity.setPosition(camPos2);
+                var dir2 = lookAtPosition.clone().sub(camPos2);
+                var upVec2 = this._safeUpFor(dir2);
+                tempEntity.lookAt(lookAtPosition.x, lookAtPosition.y, lookAtPosition.z, upVec2);
                 const targetRotation = tempEntity.getRotation();
                 
                 // 방어 코드: targetRotation이 null이거나 유효하지 않은 경우 처리
@@ -276,12 +337,19 @@ var CameraManager = (function() {
                 
                 const newRotation = currentRotation.slerp(targetRotation, this.lookAtSpeed * dt);
                 
-                // 방어 코드: slerp 결과가 유효하지 않은 경우 처리
-                if (!newRotation || 
-                    !Number.isFinite(newRotation.x) || 
-                    !Number.isFinite(newRotation.y) || 
-                    !Number.isFinite(newRotation.z) || 
+                if (!newRotation ||
+                    !Number.isFinite(newRotation.x) ||
+                    !Number.isFinite(newRotation.y) ||
+                    !Number.isFinite(newRotation.z) ||
                     !Number.isFinite(newRotation.w)) {
+                    // fallback: 클램프된 t로 재시도
+                    const tClamp = pc.math.clamp((Number.isFinite(dt) ? dt : 0.016) * this.lookAtSpeed, 0, 1);
+                    const safeRot = new pc.Quat();
+                    safeRot.slerp(currentRotation, targetRotation, tClamp);
+                    if (Number.isFinite(safeRot.x) && Number.isFinite(safeRot.y) && Number.isFinite(safeRot.z) && Number.isFinite(safeRot.w)) {
+                        this.camera.setRotation(safeRot);
+                        return;
+                    }
                     console.warn('CameraManager: Invalid newRotation from slerp, skipping rotation update');
                     return;
                 }
@@ -375,6 +443,9 @@ var CameraManager = (function() {
                     console.warn('CameraManager: Invalid followSpeed value, ignoring');
                 }
             }
+            if (config.useSimpleFollow !== undefined) {
+                this.useSimpleFollow = !!config.useSimpleFollow;
+            }
             if (config.offset !== undefined) {
                 // 방어 코드: 입력값 검증
                 if (config.offset && 
@@ -418,6 +489,63 @@ var CameraManager = (function() {
                     console.warn('CameraManager: Invalid boundary values, ignoring');
                 }
             }
+        },
+        
+        // FOV 설정
+        setFOV: function(fov) {
+            if (!this._isInitialized) {
+                console.error('CameraManager not initialized. Call initialize() first.');
+                return;
+            }
+            
+            // 방어 코드: 입력값 검증
+            if (!Number.isFinite(fov)) {
+                console.warn('CameraManager: Invalid FOV value, ignoring');
+                return;
+            }
+            
+            // FOV 범위 제한
+            fov = pc.math.clamp(fov, this.minFov, this.maxFov);
+            this._targetFov = fov;
+            
+            if (!this.enableZoom) {
+                // 즉시 적용
+                this.fov = fov;
+                this.camera.camera.fov = fov;
+            }
+        },
+        
+        // 줌 기능 활성화/비활성화
+        setEnableZoom: function(enable) {
+            this.enableZoom = !!enable;
+        },
+        
+        // 줌 속도 설정
+        setZoomSpeed: function(speed) {
+            if (Number.isFinite(speed) && speed > 0) {
+                this.zoomSpeed = speed;
+            } else {
+                console.warn('CameraManager: Invalid zoom speed value, ignoring');
+            }
+        },
+        
+        // FOV 범위 설정
+        setFOVRange: function(minFov, maxFov) {
+            if (Number.isFinite(minFov) && Number.isFinite(maxFov) && minFov > 0 && maxFov > minFov) {
+                this.minFov = minFov;
+                this.maxFov = maxFov;
+                
+                // 현재 FOV가 새 범위를 벗어나면 조정
+                this.fov = pc.math.clamp(this.fov, this.minFov, this.maxFov);
+                this._targetFov = pc.math.clamp(this._targetFov, this.minFov, this.maxFov);
+            } else {
+                console.warn('CameraManager: Invalid FOV range values, ignoring');
+            }
+        },
+        
+        // 현재 FOV 가져오기
+        getFOV: function() {
+            return this.fov;
         },
         
         // 앱 참조 설정
