@@ -21,6 +21,13 @@ MyPlayerComponent.prototype.initialize = function() {
     this.entity.once('destroy', this.onEntityDestroyed, this);
 }
 
+// MyPlayerComponent.prototype.postUpdate = function(dt) {
+//     const cameraPosition = gameManager.mainCamera.getPosition();
+//     cameraPosition.x = this.entity.getPosition().x;
+//     cameraPosition.y = this.entity.getPosition().y;
+//     gameManager.mainCamera.setPosition(cameraPosition);
+// };
+
 MyPlayerComponent.prototype.onEntityInitialized = function(entityStaticData) {
     const screen = uiManager.showScreen('ingame');
     if (!screen)

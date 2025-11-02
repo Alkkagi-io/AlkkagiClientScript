@@ -5,6 +5,9 @@
             for (const worldPlayerData of packet.worldPlayerData) {
                 this.gameManager.handleAddPlayer(worldPlayerData);
             }
+
+            this.gameManager.mainCamera.camera.projection = pc.PROJECTION_ORTHOGRAPHIC;
+            this.gameManager.mainCamera.camera.orthoHeight = packet.viewSize.y;
         }
     }
 
