@@ -2,8 +2,8 @@
     function buildPacketManager(gameManager, networkManager) {
 
         const entityDataFactory = AlkkagiSharedBundle.EntityDataFactory;
-        entityDataFactory.on(AlkkagiSharedBundle.EEntityType.XPObject, AlkkagiSharedBundle.StaticEntityStaticData, null);
-        entityDataFactory.on(AlkkagiSharedBundle.EEntityType.XPContainer, AlkkagiSharedBundle.StaticEntityStaticData, AlkkagiSharedBundle.DamagableEntityDynamicData);
+        entityDataFactory.on(AlkkagiSharedBundle.EEntityType.XPObject, AlkkagiSharedBundle.XPObjectEntityStaticData, null);
+        entityDataFactory.on(AlkkagiSharedBundle.EEntityType.XPContainer, AlkkagiSharedBundle.XPContainerEntityStaticData, AlkkagiSharedBundle.DamagableEntityDynamicData);
         entityDataFactory.on(AlkkagiSharedBundle.EEntityType.GoldContainer, AlkkagiSharedBundle.StaticEntityStaticData, AlkkagiSharedBundle.DamagableEntityDynamicData);
         entityDataFactory.on(AlkkagiSharedBundle.EEntityType.Player, AlkkagiSharedBundle.CharacterEntityStaticData, AlkkagiSharedBundle.PlayerEntityDynamicData);
         entityDataFactory.on(AlkkagiSharedBundle.EEntityType.BotPlayer, AlkkagiSharedBundle.CharacterEntityStaticData, AlkkagiSharedBundle.CharacterEntityDynamicData);
