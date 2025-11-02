@@ -12,7 +12,7 @@ RankingPanel.attributes.add('rankElems', {
 RankingPanel.prototype.handleUpdateRanking = function(rankPlayerIds, rankPlayerScores) {
     for (let i = 0; i < this.rankElems.length; i++) {
         const elem = this.rankElems[i].script.RankElement;
-        const isMyPlayer = rankPlayerIds[i] == gameManager.playerEntityID;
+        const isMyPlayer = rankPlayerIds[i] === gameManager.playerEntityID;
         const rankPlayerData = window.gameManager.getWorldData(rankPlayerIds[i]);
 
         if (!isMyPlayer && !rankPlayerData) {
