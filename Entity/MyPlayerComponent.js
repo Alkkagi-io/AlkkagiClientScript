@@ -9,6 +9,11 @@ MyPlayerComponent.prototype.initialize = function() {
     this.level = 1;
     this.isMyPlayer = false;
     this._cameraRegistered = false;
+    this.charging = false;
+    this.canAttack = true;
+    this.atkCooltime = 0;
+    this.remainAtkCooltime = -1;
+    this.chargingTime = 0; 
 
     const entityComponent = this.entity.script.entityComponent;
     entityComponent.getEvents().on('entityInitialized', this.onEntityInitialized, this);
@@ -35,6 +40,8 @@ MyPlayerComponent.prototype.onEntityInitialized = function(entityStaticData) {
 
     screen.script.inGameScreen.init(gameManager.myname);
 
+    this.atkCooltime = AlkkagiSharedBundle.StatConfig.DefaultValue[AlkkagiSharedBundle.StatConfig.Type.ATK_COOLTIME];
+
     // 초기화 시점에 카메라 등록 시도
     this.tryRegisterCamera(entityStaticData);
 };
@@ -47,13 +54,19 @@ MyPlayerComponent.prototype.onEntityUpdated = function(elapsedMS, prevEntityDyna
     this.score = entityDynamicData.score;
     screen.script.inGameScreen.handlePlayerUpdate();
 
-    const remainCooltimePer = entityDynamicData.remainAtkCoolPer / 100;
-    this.atkCoolTimeGauge.enabled = remainCooltimePer > 0;
-    this.atkCoolTimeGauge.script.dynamicGaugeElement.setGauge(remainCooltimePer);
-    
-    const chargingPer = entityDynamicData.chargingPer / 100;
-    this.atkChagingInner.setLocalScale(chargingPer, chargingPer, 1);
+    if (!this.charging && this.remainAtkCooltime > 0) {
+        this.remainAtkCooltime -= elapsedMS / 1000;
+        this.atkCoolTimeGauge.script.dynamicGaugeElement.setGauge(this.remainAtkCooltime / this.atkCooltime);
+        if (this.remainAtkCooltime <= 0) {
+            this.canAttack = true;
+            this.atkCoolTimeGauge.enabled = false;
+        }
+    }
 
+    if (this.charging) {
+        this.chargingTime += elapsedMS / 1000;
+    }
+    
     // 업데이트 중에도 카메라 미등록 상태면 재시도
     if (!this._cameraRegistered) {
         const entityStaticData = this.entity.script.entityComponent?.entityStaticData;
@@ -83,6 +96,15 @@ MyPlayerComponent.prototype.handleLevelUp = function(level, levelUpPoint) {
 };
 
 MyPlayerComponent.prototype.handleStatLevelUp = function(type, level, remainLevelUpPoint) {
+    const statComponent = this.entity.script.entityStatComponent;
+    if (!statComponent)
+        return;
+
+    statComponent.handleStatLevelUp(type, level);
+    if (type == AlkkagiSharedBundle.StatConfig.Type.ATK_COOLTIME) {
+        this.atkCooltime = statComponent.getValue(type);
+    }
+    
     const screen = uiManager.getScreen('ingame');
     if (!screen) 
         return;
@@ -92,17 +114,29 @@ MyPlayerComponent.prototype.handleStatLevelUp = function(type, level, remainLeve
 };
 
 MyPlayerComponent.prototype.handleChargingStart = function() {
+    if (!this.canAttack)
+        return;
+
+    this.canAttack = false;
+    this.charging = true;
+    this.chargingTime = 0;
     this.atkDirGroup.enabled = true;
+    this.remainAtkCooltime = this.atkCooltime;
 };
 
 MyPlayerComponent.prototype.handleChargingUpdate = function(dir) {
     const rad = Math.atan2(dir.y, dir.x);
     const deg = rad * 180 / Math.PI - 90;
     this.atkDirGroup.setLocalEulerAngles(0, 0, deg);
+    const chargingPer = this.chargingTime / 3;
+    this.atkChagingInner.setLocalScale(chargingPer, chargingPer, 1);
 };
 
 MyPlayerComponent.prototype.handleChargingEnd = function() {
+    this.charging = false;
     this.atkDirGroup.enabled = false;
+    this.atkCoolTimeGauge.enabled = true;
+    this.atkCoolTimeGauge.script.dynamicGaugeElement.setGauge(1);
 };
 
 MyPlayerComponent.prototype.onEntityDestroyed = function() {
