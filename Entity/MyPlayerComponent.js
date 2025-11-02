@@ -63,6 +63,7 @@ MyPlayerComponent.prototype.onEntityUpdated = function(elapsedMS, prevEntityDyna
 
 MyPlayerComponent.prototype.onDie = function(killerEntity) {
     const resultScreen = uiManager.showScreen('result');
+
     resultScreen.script.resultScreen.show(killerEntity, {
         score: this.score, level: this.level
     });
@@ -115,7 +116,7 @@ MyPlayerComponent.prototype.onEntityDestroyed = function() {
     }
 
     if (cameraManager.target === this.entity) {
-        cameraManager.setTarget(null);
+        this.tryRemoveCamera();
     }
 };
 
@@ -132,5 +133,18 @@ MyPlayerComponent.prototype.tryRegisterCamera = function(entityStaticData) {
         cm.setTarget(this.entity);
         cm.startFollowing();
         this._cameraRegistered = true;
+    }
+};
+MyPlayerComponent.prototype.tryRemoveCamera = function() {
+    if (!this._cameraRegistered) return;
+    
+    const cm = window.cameraManager;
+    if (!cm) return;
+    
+    // 현재 추적 중인 대상이 이 엔티티인 경우에만 해제
+    if (cm.target === this.entity) {
+        cm.stopFollowing();
+        cm.setTarget(null);
+        this._cameraRegistered = false;
     }
 };
