@@ -50,6 +50,9 @@ Bootstrap.prototype.initialize = async function() {
 
     window.gameManager = new GameManager(networkManager, this.mainCamera);
 
+    // CameraManager 초기화
+    this.initializeCameraManager();
+
     buildPacketManager(window.gameManager, networkManager);
 
     networkManager.connect();
@@ -62,4 +65,59 @@ Bootstrap.prototype.onConnected = function() {
 
 Bootstrap.prototype.RegisterFactory = function(type) {
     EntityFactory.on(type, this.entityTemplates[type - 1]);
+};
+
+// CameraManager 초기화
+Bootstrap.prototype.initializeCameraManager = function() {
+    if (!this.mainCamera) {
+        console.warn('[Bootstrap] Main camera not assigned. CameraManager will not be initialized.');
+        return;
+    }
+    
+    try {
+        // CameraManager 초기화
+        window.cameraManager = CameraManager.initialize(this.mainCamera, this.app);
+        
+        // 기본 설정
+        window.cameraManager.configure({
+            followSpeed: 5,
+            smoothTime: 0.1,
+            enableLookAt: true,
+            lookAtSpeed: 10,
+            offset: { x: 0, y: 10, z: -15 }
+        });
+        
+        console.log('[Bootstrap] CameraManager initialized successfully');
+    } catch (error) {
+        console.error('[Bootstrap] Failed to initialize CameraManager:', error);
+    }
+};
+
+// Update 루프에서 CameraManager 업데이트
+Bootstrap.prototype.update = function(dt) {
+    if (window.cameraManager) {
+        window.cameraManager.update(dt);
+    }
+};
+
+// 수동으로 플레이어 카메라 설정 (디버그/테스트용)
+Bootstrap.prototype.setupPlayerCamera = function() {
+    if (!window.gameManager || !window.cameraManager) {
+        console.warn('[Bootstrap] GameManager or CameraManager not available');
+        return;
+    }
+
+    if (window.gameManager.playerEntityID === -1) {
+        console.warn('[Bootstrap] Player entity ID not set');
+        return;
+    }
+
+    const playerEntity = window.gameManager.getEntity(window.gameManager.playerEntityID);
+    if (playerEntity) {
+        window.cameraManager.setTarget(playerEntity);
+        window.cameraManager.startFollowing();
+        console.log('[Bootstrap] Manual camera setup completed for player');
+    } else {
+        console.warn('[Bootstrap] Player entity not found');
+    }
 };

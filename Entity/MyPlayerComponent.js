@@ -7,6 +7,8 @@ MyPlayerComponent.prototype.initialize = function() {
     this.atkCoolTimeGauge.script.dynamicGaugeElement.maxValue = 1;
     this.score = 0;
     this.level = 1;
+    this.isMyPlayer = false;
+    this._cameraRegistered = false;
 
     const entityComponent = this.entity.script.entityComponent;
     entityComponent.getEvents().on('entityInitialized', this.onEntityInitialized, this);
@@ -14,6 +16,9 @@ MyPlayerComponent.prototype.initialize = function() {
 
     const characterEntityComponent = this.entity.script.characterEntityComponent;
     characterEntityComponent.getEvents().on('onDie', this.onDie, this);
+
+    // 엔티티 파괴 시 카메라 타깃 해제
+    this.entity.once('destroy', this.onEntityDestroyed, this);
 }
 
 MyPlayerComponent.prototype.onEntityInitialized = function(entityStaticData) {
@@ -22,6 +27,9 @@ MyPlayerComponent.prototype.onEntityInitialized = function(entityStaticData) {
         return;
 
     screen.script.inGameScreen.init(gameManager.myname);
+
+    // 초기화 시점에 카메라 등록 시도
+    this.tryRegisterCamera(entityStaticData);
 };
 
 MyPlayerComponent.prototype.onEntityUpdated = function(elapsedMS, prevEntityDynamicData, entityDynamicData) {
@@ -38,6 +46,12 @@ MyPlayerComponent.prototype.onEntityUpdated = function(elapsedMS, prevEntityDyna
     
     const chargingPer = entityDynamicData.chargingPer / 100;
     this.atkChagingInner.setLocalScale(chargingPer, chargingPer, 1);
+
+    // 업데이트 중에도 카메라 미등록 상태면 재시도
+    if (!this._cameraRegistered) {
+        const entityStaticData = this.entity.script.entityComponent?.entityStaticData;
+        this.tryRegisterCamera(entityStaticData);
+    }
 };
 
 MyPlayerComponent.prototype.onDie = function(killerEntity) {
@@ -81,4 +95,35 @@ MyPlayerComponent.prototype.handleChargingUpdate = function(dir) {
 
 MyPlayerComponent.prototype.handleChargingEnd = function() {
     this.atkDirGroup.enabled = false;
+};
+
+MyPlayerComponent.prototype.onEntityDestroyed = function() {
+    if (!this.isMyPlayer) {
+        return;
+    }
+
+    const cameraManager = window.cameraManager;
+    if (!cameraManager) {
+        return;
+    }
+
+    if (cameraManager.target === this.entity) {
+        cameraManager.setTarget(null);
+    }
+};
+
+MyPlayerComponent.prototype.tryRegisterCamera = function(entityStaticData) {
+    if (this._cameraRegistered) return;
+    if (!entityStaticData) return;
+
+    const gm = window.gameManager;
+    const cm = window.cameraManager;
+    if (!gm || !cm) return;
+
+    if (entityStaticData.entityID === gm.playerEntityID) {
+        this.isMyPlayer = true;
+        cm.setTarget(this.entity);
+        cm.startFollowing();
+        this._cameraRegistered = true;
+    }
 };
