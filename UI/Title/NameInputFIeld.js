@@ -13,24 +13,30 @@ NameInputField.prototype.getEvents = function() {
 };
 
 NameInputField.prototype.onEnable = function () {
-    this.input = document.createElement('input');
-    this.input.type = 'text';
-    this.input.placeholder = '닉네임을 입력해주세요.';
-    this.input.style.position = 'absolute';
-    this.input.style.left = '50%';
-    this.input.style.top = '60%';
-    this.input.style.transform = 'translate(-50%, -50%)';
-    this.input.style.width = '400px';
-    this.input.style.padding = '6px 10px';
-    this.input.style.fontSize = '16px';
-    this.input.style.textAlign = 'center'; 
-    this.input.style.color = '#000'; 
-    this.input.style.zIndex = 9999;
-    this.input.style.background = '#fff';
-    this.input.style.border = '2px solid #1e1e1eff';
-    this.input.style.borderRadius = '4px';
+    const overlay = uiManager.overlayDiv;
 
-    document.body.appendChild(this.input);
+    this.input = document.createElement('input');
+    this.input.placeholder = '닉네임을 입력해주세요.';
+
+    Object.assign(this.input.style, {
+        position: 'absolute',
+        left: '50%',
+        top: '50%',
+        transform: 'translate(-50%, 110%)',
+        width: '40%',
+        height: '5%',
+        maxWidth: '400px',
+        fontSize: '20%',
+        padding: '0.5% 1%',
+        textAlign: 'center',
+        color: '#000',
+        background: '#fff',
+        border: '2px solid #1e1e1e',
+        borderRadius: '4px',
+        pointerEvents: 'auto'
+    });
+
+    overlay.appendChild(this.input);
 
     this.input.addEventListener('keydown', (e) => {
         if (e.key === 'Enter') {
