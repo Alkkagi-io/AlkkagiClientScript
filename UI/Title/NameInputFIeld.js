@@ -22,7 +22,7 @@ NameInputField.prototype.onEnable = function () {
         position: 'absolute',
         left: '50%',
         top: '50%',
-        transform: 'translate(-50%, 110%)',
+        transform: 'translate(-50%, 50%)',
         width: '40%',
         height: '5%',
         maxWidth: '400px',
