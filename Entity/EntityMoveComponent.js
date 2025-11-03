@@ -1,6 +1,6 @@
 const EntityMoveComponent = pc.createScript('entityMoveComponent');
 
-const MOVE_THRESHOLD = 0.05;
+const MOVE_THRESHOLD = 1;
 
 EntityMoveComponent.prototype.initialize = function() {
     this._velocity = new pc.Vec3();
