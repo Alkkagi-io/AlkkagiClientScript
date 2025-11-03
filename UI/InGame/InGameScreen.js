@@ -24,6 +24,7 @@ InGameScreen.prototype.postInitialize = function() {
 InGameScreen.prototype.init = function(name) {
     this.nameText.element.text = name;
     this.setLevel(1);
+    this.handleUpdatePlayerLevelUpPoint(0);
     this.statLevelUpPanel.script.statLevelUI.init();
     this.rankingPanel.script.RankingPanel.updateMyScore(0);
 }
@@ -42,7 +43,7 @@ InGameScreen.prototype.handlePlayerXPUpdate = function(totalXP) {
 }
 
 InGameScreen.prototype.handleUpdatePlayerLevelUpPoint = function(levelUpPoint) {
-    //todo: doyun
+    this.statLevelUpPanel.script.statLevelUI.handleUpdateLevelPoint(levelUpPoint);
 }
 
 InGameScreen.prototype.setLevel = function(level) {
