@@ -13,7 +13,6 @@
         // static CDN_ADDRESS = 'https://alkkagidev.plasticpipe.tube:9696/data';
         // static SHARED_BUNDLE_ADDRESS = 'https://alkkagidev.plasticpipe.tube:9696/sharedbundle';
         // static WS_ADDRESS = 'wss://alkkagidev.plasticpipe.tube:9696/ws';
-        // static WS_ADDRESS = 'ws://localhost:3000/ws';
         
         // live
         // static CDN_ADDRESS = 'https://alkkagi-io.plasticpipe.tube:5996/data';
