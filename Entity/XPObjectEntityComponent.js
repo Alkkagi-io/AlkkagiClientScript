@@ -30,4 +30,14 @@ XPObjectEntityComponent.prototype.initialize = function() {
 };
 
 XPObjectEntityComponent.prototype.onEntityInitialized = function(entityStaticData) {
+    const STEP = 3;
+    const index = Math.min(Math.floor(entityStaticData.xpAmount / STEP), this.innerColorList.length - 1);
+
+    const innerColor = this.innerColorList[index];
+    this.innerImage.sprite.color = innerColor;
+    this.innerImage.sprite.opacity = 1;
+
+    const outlineColor = this.outlineColorList[index];
+    this.outlineImage.sprite.color = outlineColor;
+    this.outlineImage.sprite.opacity = 1;
 };
