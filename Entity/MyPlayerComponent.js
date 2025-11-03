@@ -57,8 +57,6 @@ MyPlayerComponent.prototype.onEntityUpdated = function(elapsedMS, prevEntityDyna
     const moveComponent = this.entity.script.entityMoveComponent;
     if (this.charging && moveComponent.getVelocity().lengthSq() > MOVE_THRESHOLD) {
         this.handleChargingEnd();
-        this.canAttack = true;
-        this.atkCoolTimeGauge.enabled = false;
     }
 
     if (!this.charging && this.remainAtkCooltime > 0) {
@@ -124,22 +122,25 @@ MyPlayerComponent.prototype.handleChargingStart = function() {
     if (!this.canAttack)
         return;
 
-    this.canAttack = false;
     this.charging = true;
     this.chargingTime = 0;
     this.atkDirGroup.enabled = true;
-    this.remainAtkCooltime = this.atkCooltime;
 };
 
 MyPlayerComponent.prototype.handleChargingUpdate = function(dir) {
     const rad = Math.atan2(dir.y, dir.x);
     const deg = rad * 180 / Math.PI - 90;
     this.atkDirGroup.setLocalEulerAngles(0, 0, deg);
-    const chargingPer = this.chargingTime / 3;
+    const chargingPer = Math.min(1, this.chargingTime / 3);
     this.atkChagingInner.setLocalScale(chargingPer, chargingPer, 1);
 };
 
 MyPlayerComponent.prototype.handleChargingEnd = function() {
+    if (!this.canAttack)
+        return;
+    
+    this.canAttack = false;
+    this.remainAtkCooltime = this.atkCooltime + 0.2;
     this.charging = false;
     this.atkDirGroup.enabled = false;
     this.atkCoolTimeGauge.enabled = true;
