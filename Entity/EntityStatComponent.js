@@ -14,9 +14,11 @@ EntityStatComponent.prototype.getValue = function(type) {
     value = defaultValue;
 
     // 레벨업 수치 합산
-    const res = AlkkagiSharedBundle.ResourceStatLevelUp.get(type);
-    if(res == null)
+    const res = AlkkagiSharedBundle.ResourceStatLevelUp.getByStatType(type);
+    if(res == null){
+        console.log('res is null');
         return 0;
+    }
 
     const levelUpValue = res.getLevelValue(this.levels[res.id]);
     if(levelUpValue == null)
