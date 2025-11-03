@@ -14,6 +14,7 @@ MyPlayerComponent.prototype.initialize = function() {
     this.atkCooltime = 0;
     this.remainAtkCooltime = -1;
     this.chargingTime = 0; 
+    this.prevElapsedMS = 0;
 
     const entityComponent = this.entity.script.entityComponent;
     entityComponent.getEvents().on('entityInitialized', this.onEntityInitialized, this);
@@ -34,6 +35,8 @@ MyPlayerComponent.prototype.initialize = function() {
 // };
 
 MyPlayerComponent.prototype.onEntityInitialized = function(entityStaticData) {
+    this.prevElapsedMS = Date.now();
+
     const screen = uiManager.showScreen('ingame');
     if (!screen)
         return;
@@ -47,6 +50,10 @@ MyPlayerComponent.prototype.onEntityInitialized = function(entityStaticData) {
 };
 
 MyPlayerComponent.prototype.onEntityUpdated = function(elapsedMS, prevEntityDynamicData, entityDynamicData) {
+    const currentTime = Date.now();
+    const rawElapsedMS = currentTime - this.prevElapsedMS;
+    this.prevElapsedMS = currentTime;
+
     const screen = uiManager.getScreen('ingame');
     if (!screen) 
         return;
@@ -60,7 +67,7 @@ MyPlayerComponent.prototype.onEntityUpdated = function(elapsedMS, prevEntityDyna
     }
 
     if (!this.charging && this.remainAtkCooltime > 0) {
-        this.remainAtkCooltime -= elapsedMS / 1000;
+        this.remainAtkCooltime -= rawElapsedMS / 1000;
         this.atkCoolTimeGauge.script.dynamicGaugeElement.setGauge(this.remainAtkCooltime / this.atkCooltime);
         if (this.remainAtkCooltime <= 0) {
             this.canAttack = true;
@@ -69,7 +76,7 @@ MyPlayerComponent.prototype.onEntityUpdated = function(elapsedMS, prevEntityDyna
     }
 
     if (this.charging) {
-        this.chargingTime += elapsedMS / 1000;
+        this.chargingTime += rawElapsedMS / 1000;
     }
     
     // 업데이트 중에도 카메라 미등록 상태면 재시도
