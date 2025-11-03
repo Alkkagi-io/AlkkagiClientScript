@@ -32,6 +32,11 @@ InputManager.prototype.update = function (dt) {
         return;
     }
 
+    const myPlayer = gameManager.getEntity(gameManager.playerEntityID);
+    const characterComponent = myPlayer?.script?.characterEntityComponent ?? null;
+    if (!myPlayer || !characterComponent || characterComponent.isDead)
+        return;
+
     // 블록 해제
     this._lastBlockReason = null;
 
@@ -68,24 +73,18 @@ InputManager.prototype.update = function (dt) {
             dir.set(1, 0);
         }
         dir.normalize();
-        const myPlayer = gameManager.getEntity(gameManager.playerEntityID)
-        if (myPlayer)
-            myPlayer.script.myPlayerComponent.handleChargingUpdate(dir);
+        myPlayer.script.myPlayerComponent.handleChargingUpdate(dir);
     }
 
     if (attackPressed && !this.isCharging) {
         // 공격 시작
-        const myPlayer = gameManager.getEntity(gameManager.playerEntityID)
-        if (myPlayer)
-            myPlayer.script.myPlayerComponent.handleChargingStart();
+        myPlayer.script.myPlayerComponent.handleChargingStart();
         gameManager.networkManager.send(new AlkkagiSharedBundle.C2S_StartAttackChargingPacket());
         this.isCharging = true;
         console.log('[InputManager] Start Attack');
     } else if (!attackPressed && this.isCharging) {
         // 공격 종료
-        const myPlayer = gameManager.getEntity(gameManager.playerEntityID)
-        if (myPlayer)
-            myPlayer.script.myPlayerComponent.handleChargingEnd();
+        myPlayer.script.myPlayerComponent.handleChargingEnd();
         var dir = this._getAimDirection2D();
         if (dir.length() === 0) {
             dir.copy(this._lastNonZeroDir);
