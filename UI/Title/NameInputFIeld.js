@@ -26,7 +26,7 @@ NameInputField.prototype.onEnable = function () {
         width: '40%',
         height: '5%',
         maxWidth: '400px',
-        fontSize: '20%',
+        fontSize: '140%',
         padding: '0.5% 1%',
         textAlign: 'center',
         color: '#000',
@@ -38,12 +38,12 @@ NameInputField.prototype.onEnable = function () {
 
     overlay.appendChild(this.input);
 
-    this.input.addEventListener('keydown', (e) => {
-        if (e.key === 'Enter') {
-            const text = this.input.value;
-            this.getEvents().emit('onEnter', text);
-        }
-    });
+    // this.input.addEventListener('keydown', (e) => {
+    //     if (e.key === 'Enter') {
+    //         const text = this.input.value;
+    //         this.getEvents().emit('onEnter', text);
+    //     }
+    // });
 };
 
 NameInputField.prototype.onDisable = function () {

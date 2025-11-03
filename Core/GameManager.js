@@ -20,6 +20,10 @@
             this.networkManager.send(new AlkkagiSharedBundle.C2S_EnterWorldRequestPacket(this.myname));
         }
 
+        restart() {
+            this.networkManager.send(new AlkkagiSharedBundle.C2S_EnterWorldRequestPacket(this.myname));
+        }
+
         handleAddPlayer(worldPlayerData) {
             this._worldPlayerData.set(worldPlayerData.entityID, worldPlayerData);
         }

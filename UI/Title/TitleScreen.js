@@ -23,4 +23,5 @@ TitleScreen.prototype.postInitialize = function() {
 
 TitleScreen.prototype.onEnter = function(text) {
     gameManager.enterGame(text);
+    this.enterBtn.button.active = false;
 }

@@ -26,8 +26,11 @@ ResultScreen.prototype.show = function(killer, myData) {
     this.killby.element.text = `다음에 의해 죽음\n<${killerData ? killerData.name : "???"}>`;
 
     this.stats.element.text = `최종 점수 - ${myData.score}\n레벨 - ${myData.level}`;
+
+    this.restartBtn.button.active = true;
 }
 
 ResultScreen.prototype.onClickRestart = function() {
-    
+    gameManager.restart();
+    this.restartBtn.button.active = false;
 }
