@@ -143,7 +143,7 @@ MyPlayerComponent.prototype.handleChargingUpdate = function(dir) {
 };
 
 MyPlayerComponent.prototype.handleChargingEnd = function() {
-    if (!this.canAttack)
+    if (this.charging && !this.canAttack)
         return;
 
     this.charging = false;
