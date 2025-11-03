@@ -12,7 +12,7 @@ MyPlayerComponent.prototype.initialize = function() {
     this.charging = false;
     this.canAttack = true;
     this.atkCooltime = 0;
-    this.remainAtkCooltime = -1;
+    this.remainAtkCooltime = 0;
     this.chargingTime = 0; 
     this.prevElapsedMS = 0;
 
@@ -145,11 +145,15 @@ MyPlayerComponent.prototype.handleChargingUpdate = function(dir) {
 MyPlayerComponent.prototype.handleChargingEnd = function() {
     if (!this.canAttack)
         return;
+
+    this.charging = false;
+    this.atkDirGroup.enabled = false;
+
+    if (this.chargingTime <= 0.5)
+        return;
     
     this.canAttack = false;
     this.remainAtkCooltime = this.atkCooltime + 0.2;
-    this.charging = false;
-    this.atkDirGroup.enabled = false;
     this.atkCoolTimeGauge.enabled = true;
     this.atkCoolTimeGauge.script.dynamicGaugeElement.setGauge(1);
 };
