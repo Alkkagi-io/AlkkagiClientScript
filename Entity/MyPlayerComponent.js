@@ -78,6 +78,8 @@ MyPlayerComponent.prototype.onEntityInitialized = function (entityStaticData) {
     const statComponent = this.entity.script.entityStatComponent;
     if (statComponent) {
         this.atkCooltime = statComponent.getValue(AlkkagiSharedBundle.StatConfig.Type.ATK_COOLTIME);
+        const res = AlkkagiSharedBundle.ResourceStatLevelUp.getByStatType(AlkkagiSharedBundle.StatConfig.Type.ATK_COOLTIME);
+        console.log('res', res);
     }
 
     // 초기화 시점에 카메라 등록 시도
