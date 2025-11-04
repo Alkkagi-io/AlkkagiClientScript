@@ -5,6 +5,7 @@
             this._uiSoundMap = uiSoundMap;
             this._currentScreen = null;
             this.createCustomOverlayDiv();
+            // this.createBlockDiv("테스트 블락 패널 입니다.\nddd")
         }
 
         // type: title, ingame, result
@@ -37,6 +38,79 @@
             this._currentScreen = this.getScreen(type);
             this._currentScreen.enabled = true;
             return this._currentScreen;
+        }
+
+        createBlockDiv(text) {
+            const overlay = this.overlayDiv;
+            if (!overlay) {
+                console.warn('[UIManager] overlayDiv not found');
+                return null;
+            }
+
+            const parent = overlay.parentNode;
+
+            // 중복 생성 방지
+            if (this.blockDiv && this.blockDiv.parentNode) return this.blockDiv;
+
+            // overlay 위로 덮기 (z-index 계산)
+            const overlayZ = parseInt(getComputedStyle(overlay).zIndex) || 1;
+            const blockZ = overlayZ + 1; // overlay보다 위로
+
+            // 화면 전체 차단용 div 생성
+            this.blockDiv = document.createElement('div');
+            Object.assign(this.blockDiv.style, {
+                position: 'fixed',
+                left: '0',
+                top: '0',
+                width: '100vw',
+                height: '100vh',
+                zIndex: String(blockZ),
+                background: 'rgba(0, 0, 0, 0.85)',
+                pointerEvents: 'auto',
+                display: 'flex', 
+                userSelect: 'none',
+                touchAction: 'none',
+                overscrollBehavior: 'none',
+            });
+
+            const textEl = document.createElement('div');
+            textEl.textContent = text;
+            Object.assign(textEl.style, {
+                color: '#fff',  
+                position: 'absolute',
+                left: '50%',
+                top: '40%',
+                transform: 'translate(-50%, 50%)',
+                fontSize: '2vw',
+                fontWeight: '600',
+                textAlign: 'center',
+                lineHeight: '1.35',
+                letterSpacing: '0.2px',
+                // 멀티라인 대비
+                wordBreak: 'keep-all',
+                whiteSpace: 'pre-wrap'
+            });
+            this.blockDiv.appendChild(textEl);
+
+            // 모든 입력 막기
+            const swallow = (e) => {
+                e.preventDefault();
+                e.stopImmediatePropagation();
+                e.stopPropagation();
+                return false;
+            };
+            [
+                'pointerdown','pointermove','pointerup','pointercancel',
+                'mousedown','mousemove','mouseup','click','dblclick','contextmenu',
+                'touchstart','touchmove','touchend','touchcancel',
+                'wheel','scroll','keydown','keyup'
+            ].forEach(type => this.blockDiv.addEventListener(type, swallow, { passive: false }));
+
+            // overlay 위로 삽입
+            if (overlay.nextSibling) parent.insertBefore(this.blockDiv, overlay.nextSibling);
+            else parent.appendChild(this.blockDiv);
+
+            return this.blockDiv;
         }
 
         createCustomOverlayDiv() {
