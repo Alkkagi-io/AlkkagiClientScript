@@ -54,7 +54,7 @@ Bootstrap.prototype.initialize = async function() {
     window.gameManager = new GameManager(networkManager, this.mainCamera);
 
     // CameraManager 초기화
-    // this.initializeCameraManager();
+    this.initializeCameraManager();
 
     buildPacketManager(window.gameManager, networkManager);
 
@@ -86,7 +86,7 @@ Bootstrap.prototype.initializeCameraManager = function() {
             smoothTime: 0.1,
             enableLookAt: true,
             lookAtSpeed: 10,
-            offset: { x: 0, y: 10, z: -15 }
+            offset: { x: 0, y: 0, z: 0 }
         });
         
         console.log('[Bootstrap] CameraManager initialized successfully');
