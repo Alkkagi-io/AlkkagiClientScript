@@ -16,17 +16,30 @@ InGameScreen.attributes.add('rankingPanel', {
     type: 'entity'
 });
 
+InGameScreen.attributes.add('controlNotiPopup', {
+    type: 'entity'
+});
+
+InGameScreen.attributes.add('playTime', {
+    type: 'number'
+});
+
 InGameScreen.prototype.postInitialize = function() {
     uiManager.addScreen('ingame', this.entity);
     this.entity.enabled = false;
 }
 
 InGameScreen.prototype.init = function(name) {
+    this.playTime += 1;
     this.nameText.element.text = name;
     this.setLevel(1);
     this.handleUpdatePlayerLevelUpPoint(0);
     this.statLevelUpPanel.script.statLevelUI.init();
     this.rankingPanel.script.RankingPanel.updateMyScore(0);
+
+    if (this.playTime <= 1) {
+        this.controlNotiPopup.script.controlNotiPopup.show();
+    }
 }
 
 InGameScreen.prototype.handlePlayerUpdate = function() {
