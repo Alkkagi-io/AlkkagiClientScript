@@ -12,12 +12,20 @@
         }
 
         enterGame(name) {
-            if (!name || name.length === 0 || name.length > 8) {
-                return;
+            if (!name || name.length === 0) {
+                uiManager.showToastPopup('닉네임을 입력해주세요.', 1.5);
+                return false;
+            }
+
+            if (name.length > 8) {
+                uiManager.showToastPopup('닉네임은 최대 8글자까지\n입력 가능합니다.', 1.5);
+                return false;
             }
 
             this.myname = name;
             this.networkManager.send(new AlkkagiSharedBundle.C2S_EnterWorldRequestPacket(this.myname));
+
+            return true;
         }
 
         restart() {

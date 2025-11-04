@@ -21,6 +21,13 @@
             AudioManager.playSound(soundAsset, 1);
         }
 
+        showToastPopup(text, time) {
+            if (!this.toastPopup || this.toastPopup.entity.enabled)
+                return;
+
+            this.toastPopup.show(text, time);
+        }
+
         showScreen(type) {
             if (this._currentScreen) {
                 this._currentScreen.enabled = false;

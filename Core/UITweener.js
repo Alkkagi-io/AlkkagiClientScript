@@ -16,7 +16,7 @@
 
                 // position
                 if (tween.type === 'move') {
-                    target.setPosition(
+                    target.setLocalPosition(
                         tween.startX + (tween.endX - tween.startX) * eased,
                         tween.startY + (tween.endY - tween.startY) * eased,
                         0
@@ -32,16 +32,23 @@
                     );
                 }
 
-                if (t >= 1) 
-                    this.tweenMap.delete(target);
+                if (t >= 1)
+                    this._completeTween(target, tween);
             }
         }
 
-        doMove(target, endX, endY, duration = 1000, easing = t => t) {
+        _completeTween(target, tween) {
+            if (tween.onComplete)
+                tween.onComplete();
+
+            this.tweenMap.delete(target);
+        }
+
+        doMove(target, endX, endY, duration, onComplete = null, easing = t => t) {
             if (!target)
                 return;
 
-            const startPos = target.getPosition();
+            const startPos = target.getLocalPosition();
 
             this.tweenMap.set(target, {
                 type: 'move',
@@ -51,11 +58,12 @@
                 endY,
                 duration,
                 elapsed: 0,
+                onComplete,
                 easing
             });
         }
 
-        doScale(target, endX, endY, duration = 1000, easing = t => t) {
+        doScale(target, endX, endY, duration, onComplete = null, easing = t => t) {
             if (!target)
                 return;
 
@@ -69,6 +77,7 @@
                 endY,
                 duration,
                 elapsed: 0,
+                onComplete,
                 easing
             });
         }
