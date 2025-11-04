@@ -1,7 +1,7 @@
 (function(root) {
     class UITweener {
         constructor() {
-            tweenMap = new Map();   
+            this.tweenMap = new Map();   
         }
 
         update(deltaTime) {
