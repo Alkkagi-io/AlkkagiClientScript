@@ -103,14 +103,14 @@ var CameraManager = (function() {
             if (this._isFollowing && this.followSpeed > 0) {
                 this.snapToTarget();
             } else if (!this._isFollowing || this.followSpeed === 0) {
-                this.resetToInitial();
+                // this.resetToInitial();
             }
         },
 
         setFollowSpeed: function(speed) {
             this.followSpeed = Math.max(0, speed);
             if (this.followSpeed === 0) {
-                this.resetToInitial();
+                // this.resetToInitial();
             } else if (this._isFollowing) {
                 this.snapToTarget();
             }
@@ -125,7 +125,7 @@ var CameraManager = (function() {
 
         stopFollowing: function() {
             this._isFollowing = false;
-            this.resetToInitial();
+            // this.resetToInitial();
         },
 
         isFollowing: function() {
