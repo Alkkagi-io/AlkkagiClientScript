@@ -4,12 +4,8 @@ Bootstrap.attributes.add('mainCamera', { type: 'entity' });
 Bootstrap.attributes.add('entityTemplates', { type: 'asset', assetType: 'template', array: true });
 
 Bootstrap.attributes.add('ingameUISoundTable', {
-    type: 'json',
-    array: true,
-    schema: [
-        { name: 'soundSlot', type: 'string' },
-        { name: 'soundIndex', type: 'number' }
-    ]
+    type: 'string',
+    array: true
 });
 
 Bootstrap.attributes.add('ingameUISoundLibrary', {
@@ -22,18 +18,11 @@ Bootstrap.prototype.initialize = async function() {
     AudioManager.setGlobalVolume(0.1);
 
     const ingameUISoundMap = new Map();
-    this.ingameUISoundTable.forEach(soundTableRow => {
-        if(soundTableRow.soundIndex < 0 || soundTableRow.soundIndex >= this.ingameUISoundLibrary.length) {
-            return;
-        }
-
-        const soundAsset = this.ingameUISoundLibrary[soundTableRow.soundIndex];
-        if(soundAsset == null) {
-            return;
-        }
-
-        ingameUISoundMap.set(soundTableRow.soundSlot, soundAsset);
-    });
+    for(let i = 0; i < this.ingameUISoundTable.length; i++) {
+        const soundSlot = this.ingameUISoundTable[i];
+        const soundAsset = this.ingameUISoundLibrary[i];
+        ingameUISoundMap.set(soundSlot, soundAsset);
+    }
 
     // SharedBundle 로드 전 먼저 등록
     window.uiManager = new UIManager(ingameUISoundMap);
