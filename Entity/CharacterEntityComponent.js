@@ -44,19 +44,11 @@ CharacterEntityComponent.prototype.onEntityUpdated = function(elapsedMS, prevEnt
 }
 
 CharacterEntityComponent.prototype.onTriggerEnter = function(entity) {
-    if(this.isDead) {
-        return;
-    }
-
     const soundComponent = entity.script.entitySoundComponent;
     soundComponent?.playSound('collision');
 };
 
 CharacterEntityComponent.prototype.onCollisionStart = function(result) {
-    if(this.isDead) {
-        return;
-    }
-
     this.lastCollisionEntity = result.other;
 
     const soundComponent = result.other.script.entitySoundComponent;
@@ -69,7 +61,9 @@ CharacterEntityComponent.prototype._die = function() {
     const soundComponent = this.entity.script.entitySoundComponent;
     soundComponent?.playSound('dead');
 
-    this.getEvents().emit('onDie', this.lastCollisionEntity);
+    setTimeout(() => {
+        this.getEvents().emit('onDie', this.lastCollisionEntity);
+    }, 1000);
 
     // 필요시 연출 추가
     // 직접적으로 destroy를 호출해선 안 된다.

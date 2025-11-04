@@ -79,7 +79,6 @@ MyPlayerComponent.prototype.onEntityInitialized = function (entityStaticData) {
     if (statComponent) {
         this.atkCooltime = statComponent.getValue(AlkkagiSharedBundle.StatConfig.Type.ATK_COOLTIME);
         const res = AlkkagiSharedBundle.ResourceStatLevelUp.getByStatType(AlkkagiSharedBundle.StatConfig.Type.ATK_COOLTIME);
-        console.log('res', res);
     }
 
     // 초기화 시점에 카메라 등록 시도
@@ -175,7 +174,6 @@ MyPlayerComponent.prototype.handleChargingEnd = function () {
 
     this.canAttack = false;
     this.remainAtkCooltime = this.atkCooltime + 0.2;
-    console.log('remainAtkCooltime', this.remainAtkCooltime);
     this.atkCoolTimeGauge.enabled = true;
     this.atkCoolTimeGauge.script.dynamicGaugeElement.setGauge(1);
 };
