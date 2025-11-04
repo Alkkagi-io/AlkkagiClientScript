@@ -40,3 +40,7 @@ EntityStatComponent.prototype.getValue = function(type) {
 EntityStatComponent.prototype.handleStatLevelUp = function(type, level) {
     this.levels[type] = level;
 }
+
+EntityStatComponent.prototype.getLevel = function(type) {
+    return this.levels[type] ?? 0;
+}

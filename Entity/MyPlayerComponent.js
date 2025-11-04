@@ -127,6 +127,12 @@ MyPlayerComponent.prototype.handleStatLevelUp = function (type, level, remainLev
     if (!statComponent)
         return;
 
+    if(statComponent.getLevel(type) < level) {
+        uiManager.playUISound('stat_levelup');
+    } else {
+        uiManager.playUISound('button_error');
+    }
+
     statComponent.handleStatLevelUp(type, level);
     if (type == AlkkagiSharedBundle.EStatLevelUpType.REDUCE_ATK_COOLTIME) {
         this.atkCooltime = statComponent.getValue(AlkkagiSharedBundle.StatConfig.Type.ATK_COOLTIME);
