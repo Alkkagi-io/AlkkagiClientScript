@@ -15,6 +15,7 @@ TitleScreen.prototype.postInitialize = function() {
     const inputField = this.inputField.script.nameInputField;
     inputField.getEvents().on('onEnter', this.onEnter, this);
 
+    this.enterBtn.button.off('click');
     this.enterBtn.button.on('click', event => {
         const text = inputField.input.value;
         this.onEnter(text);

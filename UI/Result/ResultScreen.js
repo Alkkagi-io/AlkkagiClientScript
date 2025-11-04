@@ -14,6 +14,7 @@ ResultScreen.attributes.add('restartBtn', {
 
 ResultScreen.prototype.postInitialize = function() {
     uiManager.addScreen('result', this.entity);
+    this.restartBtn.button.off('click');
     this.restartBtn.button.on('click', event => {
         this.onClickRestart();
         uiManager.playUISound('default_button_click');

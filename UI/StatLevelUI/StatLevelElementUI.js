@@ -18,6 +18,7 @@ StatLevelElementUI.attributes.add('level', {
 
 StatLevelElementUI.prototype.init = function(statId) {
     this.statId = statId;  
+    this.button.button.off('click');
     this.button.button.on('click', event => {
         this.onClickUpgrade();
         uiManager.playUISound('default_button_click');
