@@ -37,6 +37,7 @@ Bootstrap.prototype.initialize = async function() {
 
     // SharedBundle 로드 전 먼저 등록
     window.uiManager = new UIManager(ingameUISoundMap);
+    window.uiTweener = new UITweener();
 
     await SharedCodeLoader.initialize();
     await ResourceManager.initialize();
@@ -98,6 +99,10 @@ Bootstrap.prototype.initializeCameraManager = function() {
 Bootstrap.prototype.update = function(dt) {
     if (window.cameraManager) {
         window.cameraManager.update(dt);
+    }
+
+    if (window.uiTweener) {
+        window.uiTweener.update(dt);
     }
 };
 
