@@ -3,6 +3,8 @@ const CharacterEntityComponent = pc.createScript('characterEntityComponent');
 const SCALE_THRESHOLD = 0.05;
 
 CharacterEntityComponent.prototype.initialize = function() {
+    this.nameText = this.entity.findByName('nameText');
+
     const entityComponent = this.entity.script.entityComponent;
     entityComponent.getEvents().on('entityInitialized', this.onEntityInitialized, this);
     entityComponent.getEvents().on('entityUpdated', this.onEntityUpdated, this);
@@ -22,11 +24,30 @@ CharacterEntityComponent.prototype.getEvents = function() {
 CharacterEntityComponent.prototype.onEntityInitialized = function(entityStaticData) {
     const scale = entityStaticData.scale;
     this.entity.setLocalScale(scale, scale, scale);
+    this.entityStaticData = entityStaticData;
+
+    if (this.nameText) {
+        const worldData = gameManager.getWorldData(entityStaticData.entityID);
+        this.nameText.enabled = false;
+
+        if (worldData) {
+            this.nameText.element.text = worldData.name;
+        }
+    }
 }
 
 CharacterEntityComponent.prototype.onEntityUpdated = function(elapsedMS, prevEntityDynamicData, entityDynamicData) {
     if(this.isDead) {
         return;
+    }
+
+    if (this.nameText && !this.nameText.enabled) {
+        const worldData = gameManager.getWorldData(this.entityStaticData.entityID);
+        
+        if (worldData) {
+            this.nameText.enabled = true;
+            this.nameText.element.text = worldData.name;
+        }
     }
 
     const curScale = this.entity.getLocalScale().x;
