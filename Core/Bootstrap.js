@@ -17,6 +17,12 @@ Bootstrap.attributes.add('ingameUISoundLibrary', {
 Bootstrap.prototype.initialize = async function() {
     AudioManager.setGlobalVolume(0.1);
 
+
+    if (pc.platform.desktop == false) {
+        uiManager.createBlockDiv('데스크탑 환경에서만 실행할 수 있습니다.');
+        return;
+    }
+
     const ingameUISoundMap = new Map();
     for(let i = 0; i < this.ingameUISoundTable.length; i++) {
         const soundSlot = this.ingameUISoundTable[i];
@@ -39,6 +45,8 @@ Bootstrap.prototype.initialize = async function() {
     const networkOptions = createNetworkOptions({ address: Define.WS_ADDRESS });
     const networkManager = new NetworkManager(networkOptions);
     networkManager.events.on('connected', this.onConnected, this);
+    networkManager.events.on('disconnected', this.onDisconnected, this);
+    networkManager.events.on('error', this.onError, this);
 
     window.gameManager = new GameManager(networkManager, this.mainCamera);
 
@@ -52,6 +60,14 @@ Bootstrap.prototype.initialize = async function() {
 
 Bootstrap.prototype.onConnected = function() {
     uiManager.showScreen('title');
+};
+
+Bootstrap.prototype.onDisconnected = function() {
+    uiManager.createBlockDiv('서버 점검 중입니다. 잠시 후 다시 시도해주세요.');
+};
+
+Bootstrap.prototype.onError = function(error) {
+    uiManager.createBlockDiv('서버 점검 중입니다. 잠시 후 다시 시도해주세요.');
 };
 
 Bootstrap.prototype.RegisterFactory = function(type) {

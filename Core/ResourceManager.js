@@ -13,6 +13,11 @@
         static async _getJsonData(fileName) {
             const path = `${Define.CDN_ADDRESS}/${fileName}`;
             const res = await fetch(path);
+            if (res.ok == false) {
+                uiManager.createBlockDiv('서버 점검 중입니다. 잠시 후 다시 시도해주세요.');
+                return '{}';
+            }
+
             const json = await res.json();
             return JSON.stringify(json);
         }

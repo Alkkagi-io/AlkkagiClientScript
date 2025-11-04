@@ -9,6 +9,10 @@
             script.src = Define.SHARED_BUNDLE_ADDRESS;
             document.getElementsByTagName('head')[0].appendChild(script);
 
+            script.onerror = (e) => {
+                uiManager.createBlockDiv('서버 점검 중입니다. 잠시 후 다시 시도해주세요.');
+            };
+
             await new Promise(resolve => {
                 script.onload = () => {
                     resolve();
