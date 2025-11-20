@@ -36,11 +36,10 @@ Bootstrap.prototype.initialize = async function() {
 
     await SharedCodeLoader.initialize();
     await ResourceManager.initialize();
-    this.RegisterFactory(AlkkagiSharedBundle.EEntityType.BotPlayer);
-    this.RegisterFactory(AlkkagiSharedBundle.EEntityType.XPObject);
-    this.RegisterFactory(AlkkagiSharedBundle.EEntityType.XPContainer);
-    this.RegisterFactory(AlkkagiSharedBundle.EEntityType.GoldContainer);
-    this.RegisterFactory(AlkkagiSharedBundle.EEntityType.Player);
+
+    Object.values(AlkkagiSharedBundle.EEntityType).forEach(entityType => {
+        this.RegisterFactory(entityType);
+    });
     
     const networkOptions = createNetworkOptions({ address: Define.WS_ADDRESS });
     const networkManager = new NetworkManager(networkOptions);
@@ -71,7 +70,16 @@ Bootstrap.prototype.onError = function(error) {
 };
 
 Bootstrap.prototype.RegisterFactory = function(type) {
-    EntityFactory.on(type, this.entityTemplates[type - 1]);
+    if(type == AlkkagiSharedBundle.EEntityType.None) {
+        return;
+    }
+
+    const index = type - 1;
+    if(index < 0 || index >= this.entityTemplates.length) {
+        return;
+    }
+    
+    EntityFactory.on(type, this.entityTemplates[index]);
 };
 
 // CameraManager 초기화
