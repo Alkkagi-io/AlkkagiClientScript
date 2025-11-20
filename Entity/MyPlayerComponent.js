@@ -221,3 +221,11 @@ MyPlayerComponent.prototype.tryRemoveCamera = function () {
         this._cameraRegistered = false;
     }
 };
+
+MyPlayerComponent.prototype.handleGoldChanged = function (gold) {
+    console.log(`handleGoldChanged: ${gold}`);
+};
+
+MyPlayerComponent.prototype.handleAbilityChanged = function (abilityID) {
+    console.log(`handleAbilityChanged: ${abilityID}`);
+};

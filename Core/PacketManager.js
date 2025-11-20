@@ -7,6 +7,8 @@
         entityDataFactory.on(AlkkagiSharedBundle.EEntityType.GoldContainer, AlkkagiSharedBundle.StaticEntityStaticData, AlkkagiSharedBundle.DamagableEntityDynamicData);
         entityDataFactory.on(AlkkagiSharedBundle.EEntityType.Player, AlkkagiSharedBundle.PlayerEntityStaticData, AlkkagiSharedBundle.PlayerEntityDynamicData);
         entityDataFactory.on(AlkkagiSharedBundle.EEntityType.BotPlayer, AlkkagiSharedBundle.CharacterEntityStaticData, AlkkagiSharedBundle.CharacterEntityDynamicData);
+        entityDataFactory.on(AlkkagiSharedBundle.EEntityType.AbilityContainer, AlkkagiSharedBundle.StaticEntityStaticData, null);
+        entityDataFactory.on(AlkkagiSharedBundle.EEntityType.AbilityEvolutionContainer, AlkkagiSharedBundle.StaticEntityStaticData, null);
 
         const packetManager = AlkkagiSharedBundle.PacketManager;
         packetManager.on(AlkkagiSharedBundle.EPacketID.Message, AlkkagiSharedBundle.MessagePacket, MessagePacketHandler);
@@ -17,6 +19,9 @@
         packetManager.on(AlkkagiSharedBundle.EPacketID.S2C_UpdateRankingPacket, AlkkagiSharedBundle.S2C_UpdateRankingPacket, S2C_UpdateRankingPacketHandler)
         packetManager.on(AlkkagiSharedBundle.EPacketID.S2C_AddPlayerPacket, AlkkagiSharedBundle.S2C_AddPlayerPacket, S2C_AddPlayerPacketHandler);
         packetManager.on(AlkkagiSharedBundle.EPacketID.S2C_RemovePlayerPacket, AlkkagiSharedBundle.S2C_RemovePlayerPacket, S2C_RemovePlayerPacketHandler);
+        packetManager.on(AlkkagiSharedBundle.EPacketID.S2C_InteractAbilityContainerResponsePacket, AlkkagiSharedBundle.S2C_InteractAbilityContainerResponsePacket, S2C_InteractAbilityContainerResponsePacketHandler);
+        packetManager.on(AlkkagiSharedBundle.EPacketID.S2C_InteractAbilityEvolutionContainerResponsePacket, AlkkagiSharedBundle.S2C_InteractAbilityEvolutionContainerResponsePacket, S2C_InteractAbilityEvolutionContainerResponsePacketHandler);
+        packetManager.on(AlkkagiSharedBundle.EPacketID.S2C_InformCharacterAbilityChangedPacket, AlkkagiSharedBundle.S2C_InformCharacterAbilityChangedPacket, S2C_InformCharacterAbilityChangedPacketHandler);
 
         packetManager.injectHandlerArgs(gameManager, networkManager);
     }

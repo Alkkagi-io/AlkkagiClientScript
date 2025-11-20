@@ -89,3 +89,7 @@ CharacterEntityComponent.prototype._die = function() {
     // 필요시 연출 추가
     // 직접적으로 destroy를 호출해선 안 된다.
 }
+
+CharacterEntityComponent.prototype.handleAbilityChanged = function(abilityID) {
+    console.log(`handleAbilityChanged: ${abilityID}`);
+};
