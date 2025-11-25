@@ -17,12 +17,6 @@ Bootstrap.attributes.add('ingameUISoundLibrary', {
 Bootstrap.prototype.initialize = async function() {
     AudioManager.setGlobalVolume(0.1);
 
-
-    if (pc.platform.desktop == false) {
-        uiManager.createBlockDiv('데스크탑 환경에서만 실행할 수 있습니다.');
-        return;
-    }
-
     const ingameUISoundMap = new Map();
     for(let i = 0; i < this.ingameUISoundTable.length; i++) {
         const soundSlot = this.ingameUISoundTable[i];
@@ -55,6 +49,14 @@ Bootstrap.prototype.initialize = async function() {
     buildPacketManager(window.gameManager, networkManager);
 
     networkManager.connect();
+};
+
+Bootstrap.prototype.postInitialize = function() {
+    const isMobile = pc.platform.mobile;
+    const resolutionWidth = isMobile ? 1080 : 1920;
+    const resolutionHeight = isMobile ? 1920 : 1080;
+    this.app.setCanvasResolution(pc.RESOLUTION_FIXED, resolutionWidth, resolutionHeight);
+    this.app.resizeCanvas(window.innerWidth, window.innerHeight);
 };
 
 Bootstrap.prototype.onConnected = function() {
