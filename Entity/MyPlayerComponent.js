@@ -73,7 +73,7 @@ MyPlayerComponent.prototype.onEntityInitialized = function (entityStaticData) {
     if (!screen)
         return;
 
-    screen.script.inGameScreen.init(gameManager.myname);
+    screen.init(gameManager.myname);
 
     const statComponent = this.entity.script.entityStatComponent;
     if (statComponent) {
@@ -91,7 +91,7 @@ MyPlayerComponent.prototype.onEntityUpdated = function (elapsedMS, prevEntityDyn
         return;
     
     this.score = entityDynamicData.score;
-    screen.script.inGameScreen.handlePlayerUpdate();
+    screen.handlePlayerUpdate();
 
     // 업데이트 중에도 카메라 미등록 상태면 재시도
     if (!this._cameraRegistered) {
@@ -103,7 +103,7 @@ MyPlayerComponent.prototype.onEntityUpdated = function (elapsedMS, prevEntityDyn
 MyPlayerComponent.prototype.onDie = function (killerEntity) {
     const resultScreen = uiManager.showScreen('result');
 
-    resultScreen.script.resultScreen.show(killerEntity, {
+    resultScreen.show(killerEntity, {
         score: this.score, level: this.level
     });
 };
@@ -114,8 +114,8 @@ MyPlayerComponent.prototype.handleLevelUp = function (level, levelUpPoint) {
         return;
 
     this.level = level;
-    screen.script.inGameScreen.setLevel(level);
-    screen.script.inGameScreen.handleUpdatePlayerLevelUpPoint(levelUpPoint);
+    screen.setLevel(level);
+    screen.handleUpdatePlayerLevelUpPoint(levelUpPoint);
 
     const soundComponent = this.entity.script.entitySoundComponent;
     soundComponent?.playSound('levelup');
@@ -141,8 +141,8 @@ MyPlayerComponent.prototype.handleStatLevelUp = function (type, level, remainLev
     if (!screen)
         return;
 
-    screen.script.inGameScreen.statLevelUpPanel.script.statLevelUI.handleLevelUpResponse(type, level);
-    screen.script.inGameScreen.handleUpdatePlayerLevelUpPoint(remainLevelUpPoint);
+    screen.statLevelUpPanel.script.statLevelUI.handleLevelUpResponse(type, level);
+    screen.handleUpdatePlayerLevelUpPoint(remainLevelUpPoint);
 };
 
 MyPlayerComponent.prototype.handleChargingStart = function () {

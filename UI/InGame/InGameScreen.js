@@ -25,7 +25,7 @@ InGameScreen.attributes.add('playTime', {
 });
 
 InGameScreen.prototype.postInitialize = function() {
-    uiManager.addScreen('ingame', this.entity);
+    uiManager.addScreen('ingame', this, false);
     this.entity.enabled = false;
 }
 

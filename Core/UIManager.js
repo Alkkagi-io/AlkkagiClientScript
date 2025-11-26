@@ -9,12 +9,17 @@
         }
 
         // type: title, ingame, result
-        addScreen(type, screenEntity) {
-            this.screens[type] = screenEntity;
+        addScreen(type, screen, mobile) {
+            this.screens[this.getScreenTypeKey(type, mobile)] = screen;
         }
 
         getScreen(type) {
-            return this.screens[type];
+            var isMobile = pc.platform.mobile;
+            return this.screens[this.getScreenTypeKey(type, isMobile)];
+        }
+
+        getScreenTypeKey(type, mobile) {
+            return `${type}_${mobile ? "M" : "PC"}`;
         }
 
         playUISound(soundSlot) {
@@ -31,12 +36,12 @@
 
         showScreen(type) {
             if (this._currentScreen) {
-                this._currentScreen.enabled = false;
+                this._currentScreen.entity.enabled = false;
                 this._currentScreen = null;
             }
 
             this._currentScreen = this.getScreen(type);
-            this._currentScreen.enabled = true;
+            this._currentScreen.entity.enabled = true;
             return this._currentScreen;
         }
 

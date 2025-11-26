@@ -13,7 +13,7 @@ ResultScreen.attributes.add('restartBtn', {
 });
 
 ResultScreen.prototype.postInitialize = function() {
-    uiManager.addScreen('result', this.entity);
+    uiManager.addScreen('result', this, false);
     this.restartBtn.button.off('click');
     this.restartBtn.button.on('click', event => {
         this.onClickRestart();

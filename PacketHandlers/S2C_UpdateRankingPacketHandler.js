@@ -2,7 +2,7 @@
     class S2C_UpdateRankingPacketHandler extends ClientPacketHandler {
         handle(packet) {
             const screen = uiManager.getScreen('ingame');
-            const rankPanel = screen.script.inGameScreen.rankingPanel.script.RankingPanel;
+            const rankPanel = screen.rankingPanel.script.RankingPanel;
             rankPanel.handleUpdateRanking(packet.rankingPlayerIds, packet.rankingPlayerScores);
         }
     }

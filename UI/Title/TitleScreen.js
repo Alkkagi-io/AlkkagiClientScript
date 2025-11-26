@@ -9,7 +9,7 @@ TitleScreen.attributes.add('enterBtn', {
 });
 
 TitleScreen.prototype.postInitialize = function() {
-    uiManager.addScreen('title', this.entity);
+    uiManager.addScreen('title', this, false);
     this.entity.enabled = false;
 
     const inputField = this.inputField.script.nameInputField;
