@@ -12,8 +12,12 @@ ResultScreen.attributes.add('restartBtn', {
     type: 'entity'
 });
 
+ResultScreen.attributes.add('isMobile', {
+    type: 'boolean'
+});
+
 ResultScreen.prototype.postInitialize = function() {
-    uiManager.addScreen('result', this, false);
+    uiManager.addScreen('result', this, this.isMobile);
     this.restartBtn.button.off('click');
     this.restartBtn.button.on('click', event => {
         this.onClickRestart();

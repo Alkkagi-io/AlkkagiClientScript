@@ -8,8 +8,12 @@ TitleScreen.attributes.add('enterBtn', {
     type: 'entity'
 });
 
+TitleScreen.attributes.add('isMobile', {
+    type: 'boolean'
+});
+
 TitleScreen.prototype.postInitialize = function() {
-    uiManager.addScreen('title', this, false);
+    uiManager.addScreen('title', this, this.isMobile);
     this.entity.enabled = false;
 
     const inputField = this.inputField.script.nameInputField;
