@@ -23,13 +23,13 @@
             }
 
             this.myname = name;
-            this.networkManager.send(new AlkkagiSharedBundle.C2S_EnterWorldRequestPacket(this.myname));
+            this.networkManager.send(new AlkkagiSharedBundle.C2S_EnterWorldRequestPacket(this.myname, pc.platform.mobile));
 
             return true;
         }
 
         restart() {
-            this.networkManager.send(new AlkkagiSharedBundle.C2S_EnterWorldRequestPacket(this.myname));
+            this.networkManager.send(new AlkkagiSharedBundle.C2S_EnterWorldRequestPacket(this.myname, pc.platform.mobile));
         }
 
         handleAddPlayer(worldPlayerData) {
