@@ -2,6 +2,11 @@ var InputManager = pc.createScript('inputManager');
 
 // Initialize
 InputManager.prototype.initialize = function () {
+    if (pc.platform.mobile) {
+        this.enabled = false;
+        return;
+    }
+
     // 입력 상태
     this.lastInput = null;
     this._lastBlockReason = null;

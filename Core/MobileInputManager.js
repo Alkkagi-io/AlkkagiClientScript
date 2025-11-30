@@ -4,6 +4,11 @@ var MobileInputManager = pc.createScript('mobileInputManager');
 MobileInputManager.instance = null;
 
 MobileInputManager.prototype.initialize = function() {
+    if (!pc.platform.mobile) {
+        this.enabled = false;
+        return;
+    }
+
     // [추가] 싱글톤 인스턴스 할당
     MobileInputManager.instance = this;
 
