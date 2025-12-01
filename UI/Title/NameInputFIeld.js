@@ -1,5 +1,9 @@
 var NameInputField = pc.createScript('nameInputField');
 
+NameInputField.attributes.add('isMobile', {
+    type: 'boolean'
+});
+
 NameInputField.prototype.initialize = function () {
     this.on('state', enabled => {
         if (enabled) this.onEnable();
@@ -18,15 +22,19 @@ NameInputField.prototype.onEnable = function () {
     this.input = document.createElement('input');
     this.input.placeholder = '닉네임을 입력해주세요.';
 
+    const width = this.isMobile ? '60%' : '40%';
+    const maxWidth = this.isMobile ? '60%' : '400px';
+    const fontSize = this.isMobile ? '90%' : '140%';
+
     Object.assign(this.input.style, {
         position: 'absolute',
         left: '50%',
         top: '50%',
         transform: 'translate(-50%, 50%)',
-        width: '40%',
+        width: width,
         height: '5%',
-        maxWidth: '400px',
-        fontSize: '140%',
+        maxWidth: maxWidth,
+        fontSize: fontSize,
         padding: '0.5% 1%',
         textAlign: 'center',
         color: '#000',
