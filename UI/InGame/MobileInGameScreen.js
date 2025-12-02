@@ -37,9 +37,7 @@ MobileInGameScreen.prototype.init = function(name) {
     this.statLevelUpPanel.script.statLevelUI.init();
     this.rankingPanel.script.RankingPanel.updateMyScore(0);
 
-    if (this.playTime <= 1) {
-        this.controlNotiPopup.script.controlNotiPopup.show();
-    }
+    this.controlNotiPopup.script.controlNotiPopup.show(true);
 }
 
 MobileInGameScreen.prototype.handlePlayerUpdate = function() {

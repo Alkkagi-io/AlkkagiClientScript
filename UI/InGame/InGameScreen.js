@@ -38,7 +38,7 @@ InGameScreen.prototype.init = function(name) {
     this.rankingPanel.script.RankingPanel.updateMyScore(0);
 
     if (this.playTime <= 1) {
-        this.controlNotiPopup.script.controlNotiPopup.show();
+        this.controlNotiPopup.script.controlNotiPopup.show(false);
     }
 }
 
